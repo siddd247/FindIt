@@ -4,7 +4,7 @@ A local electronics availability finder for shoppers, shop owners, and administr
 
 ## Run the working local instance
 
-Requires Node.js 24+ (built-in SQLite and TypeScript stripping). No npm installation is needed for the local app.
+Requires Node.js **24.16.0 or newer** (built-in SQLite, TypeScript stripping, and Argon2). No npm installation is needed for the local app.
 
 ```powershell
 cd C:\Users\sidha\Downloads\nearby-stock-finder
@@ -13,17 +13,46 @@ node local/server.mjs
 
 Open **http://127.0.0.1:3000**. The server binds only to this computer. Stop it with Ctrl+C. To use another port: `$env:PORT='3002'` before starting.
 
-The first locally registered account becomes admin. Create it at **My shop → Create an account**. Later accounts are shop owners. Local authentication uses email/password with scrypt hashes and httpOnly session cookies. It is development authentication: email verification, password recovery, and outbound email delivery are not connected. Do not expose this runtime as a public production service.
+Owner accounts are created at **My shop → Create an account** and always have the owner role. Admin identities and sessions are separate. Owner passwords use scrypt; admin passwords use Argon2id. Email verification, password recovery and outbound email delivery are not connected. The runtime binds to localhost; public production hosting remains unfinished.
 
-Data persists in `.local/stock.sqlite`; uploaded photos live in `.local/uploads/`. Both are ignored by Git. Restarting the app preserves accounts, shops, listings, and reports. New local databases include 20 sample shops and 80 sample products. All sample records are labelled; directions and calls are disabled for demo shops. No reviews or ratings are fabricated.
+Data persists in `.local/stock.sqlite`; uploaded photos live in `.local/uploads/` (or the selected `LOCAL_DATA_DIR`). Both are ignored by Git. Restarting preserves accounts and data. Demo records have been soft archived after verified backups; default startup does not create demo data. Isolated tests explicitly enable sample fixtures. No reviews, prices or stock are fabricated.
+
+## Private admin setup
+
+Start the server, then run in another terminal:
+
+```powershell
+node scripts/admin-url.mjs
+```
+
+Open the printed private localhost link. Choose your own email and a unique password of 14–128 characters. The one-time setup token is consumed after setup. No default admin credentials exist. `/admin` returns 404; the private URL is not linked publicly. Keep `.local/security.json`, the database and backups private. To print the sign-in URL again, run the same script.
+
+Alternatively set process variables `ADMIN_EMAIL` and `ADMIN_PASSWORD`, run `node scripts/create-admin.mjs`, then remove the variables. The script uses the same one-time setup endpoint and never prints the password. Do not put real credentials in `.env.example` or Git. Admin login locks for 15 minutes after five failures, expires after 30 minutes of inactivity, and password changes revoke all sessions. Cookies are httpOnly/SameSite Strict. Set `COOKIE_SECURE=1` only behind a configured HTTPS host; local HTTP uses `0`. TOTP is not implemented.
+
+## Sourced data and availability
+
+`docs/catalogue-research.json` records selected manufacturer product/family names, source URLs and check date. Some families lack generation/configuration/specifications; these remain unknown. This is not an exhaustive global SKU catalogue. Search distinguishes catalogue matches, relevant shops to contact, and actual confirmed stock listings. Currency filters stored INR/USD listings and never converts prices. Random stock is never generated.
+
+`docs/jammu_shops_seed.csv` preserves the original 18 shops. `docs/jammu_shops_researched.csv` adds sourced areas; `docs/shop-research.json` records successful checks, inaccessible sources and remaining area gaps. Official listing checks and third-party directory checks have different public labels; neither grants owner/visit verification. Imported shops have no stock until an owner or field agent supplies a real observation. Coordinates remain empty until supplied and confirmed; area/pincode filters never invent GPS coordinates.
+
+For a new empty local database, run these explicit imports after starting once:
+
+```powershell
+node scripts/backup-db.mjs
+node scripts/import-shops.mjs --apply
+node scripts/apply-researched-catalogue.mjs
+node scripts/apply-shop-research.mjs
+```
+
+The command above applies the original shop import; omit `--apply` for a dry run. Research imports are idempotent. Source data needs periodic rechecking and shop confirmation. Existing owner records are preserved.
 
 ## Delivery process and current state
 
-**Phase 1: local implementation.** Home/search/autocomplete, fuzzy model matching, manual Jammu area or pincode, geolocation, filters, sort, list/map views, product and shop pages, directions/call, status decay, explainable ranking, independent reports, owner accounts and shop submission, one-tap and bulk confirmations, product editing, admin approval/suspension, catalogue add/merge, sample seeding/removal, admin CSV seed import with row errors, field agent entry, static pages, light/dark mode, PWA shell, and offline messaging.
+**Phase 1: local implementation.** Home/search/autocomplete, fuzzy model matching, manual Jammu area or pincode, geolocation, filters, sort, list/map views, product and shop pages, directions/call, status decay, explainable ranking, independent reports, owner accounts and shop submission, one-tap and bulk confirmations, product editing, admin approval/suspension, catalogue add/merge, sample archival, admin CSV imports with row errors, field agent entry, static pages, light/dark mode, PWA shell, and offline messaging.
 
 Core rule tests and API integration tests pass. Browser checks are tracked in `PROGRESS.md`. Public deployment, performance on a physical 4G phone, a full accessibility audit, and real email/phone authentication remain release checks. Phase 1 is not yet certified production ready.
 
-**Phase 2: not started.** Owner CSV inventory updates, reminders, reviews, saved items, and owner analytics. The community downgrade rule is included in Phase 1 because the original Phase 1 acceptance criteria explicitly require it.
+**Phase 2: not started.** Owner CSV inventory updates, outbound reminders, reviews, saved items, and expanded analytics. Actual view/direction counters and an on-screen stale reminder are already available. The community downgrade rule is included in Phase 1 because the original Phase 1 acceptance criteria explicitly require it.
 
 **Phase 3: not started.** Additional city/category rollout, price alerts, POS integrations, subscriptions. Cities/categories are represented as data/configuration; only Jammu electronics is launched.
 
@@ -40,7 +69,7 @@ The hosted scaffold is incomplete and is not the running website. Use `node loca
 - `/products/:id`: shareable product page with server-rendered content and metadata.
 - `/shops/:id`: shop details, hours, phone, searchable listings, old records.
 - `/join`, `/owner`: account and shop registration, owner stock dashboard.
-- `/admin`: approval/reports/catalogue/stale data/seed import/field agent workspace.
+- Private URL printed by `scripts/admin-url.mjs`: separate setup/login, dashboard, pending requests, reversible shop moderation, source evidence, imports, catalogue editor/merge, field stock, reports and exports.
 - `/about`, `/availability`, `/privacy`, `/terms`, `/contact`, `/for-shops`, `/design-system`.
 
 ## Local API
@@ -49,7 +78,7 @@ GET `/api/session`, `/api/catalogue`, `/api/search`, `/api/products/:id`, `/api/
 
 POST `/api/auth/signup`, `/api/auth/login`, `/api/auth/logout`, `/api/shops`, `/api/listings`, `/api/listing-edit`, `/api/confirm`, `/api/reports`, `/api/direction-tap`, `/api/upload`.
 
-Admin POST `/api/admin/shop`, `/api/admin/resolve`, `/api/admin/product`, `/api/admin/merge`, `/api/admin/seed`, `/api/admin/remove-samples`, `/api/admin/import`, `/api/admin/field-shop`.
+Admin POST `/api/admin/setup`, `/api/admin/login`, `/api/admin/logout`, `/api/admin/password`, `/api/admin/shop-status`, `/api/admin/shop-edit`, `/api/admin/shop-verify`, `/api/admin/shop-delete`, `/api/admin/undo`, `/api/admin/request-changes`, `/api/admin/report-resolve`, `/api/admin/product-save`, `/api/admin/product-merge`, `/api/admin/remove-samples`, `/api/admin/import`, `/api/admin/field-shop`, `/api/admin/field-stock`. Server authorization is required independently of the hidden UI path.
 
 All writes check same-origin JSON requests. Owner and administrator authorization is enforced server-side. No account is needed for product search, shop detail, or reports. Reports count a device or network at most once within 48 hours. On localhost all browser sessions usually share an IP; creating another browser profile will not create another independent vote.
 
@@ -62,11 +91,12 @@ Stock age: up to 48h current; over 48h caution; over 7d not recently confirmed; 
 ## Checks
 
 ```powershell
-node --test tests/rules.test.ts tests/api.test.mjs
+npm.cmd test
+npm.cmd run build
 node tests/browser-qa.mjs
 ```
 
-The API test creates a separate temporary database and server on port 3001. It does not claim admin or add test accounts to the running preview database. Browser QA uses an installed Edge and the working preview on port 3000; screenshots are saved under `.local/`.
+Automated tests use separate temporary databases and ports 3001/3003/3004; they never consume the real admin setup or add fixture inventory to the preview database. The build bundles executable runtime files and smoke-tests the built server on port 3099 without private data. `build:hosted` remains incomplete. Browser automation has failed to start installed Edge in this restricted environment; no screenshot, physical 360px/4G, Lighthouse or full accessibility pass is claimed. See `docs/PROGRESS.md` for current results and limitations.
 
 ## Resume work
 

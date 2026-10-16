@@ -2,6 +2,44 @@
 
 Run date: 2026-10-16. Follow `docs/EXECUTE-PROMPT.md`, not the old root progress file's build order.
 
+## Current integration checkpoint
+
+Implementation checkpoint: `6a0ed09` (shared public/admin integration; M6–M12 were committed together rather than separate milestone commits). Current local URL: http://127.0.0.1:3000. Admin setup is intentionally unclaimed: run `node scripts/admin-url.mjs` locally and choose credentials. No secret is stored in this document.
+
+| Milestone | Current status | Evidence / checkpoint |
+| --- | --- | --- |
+| M1 | Done | `c529754`; immutable migrations, preservation/rollback tests |
+| M2 | Done | `5d6459e`; original 18 imported idempotently; latest research does not grant owner verification |
+| M3 | Done | `4a559dd`; validated Google Maps links, count-only taps |
+| M4 | Done, user scope expanded | `0deeafb`; strict CSV importer; authorized manufacturer research imported separately |
+| M5 | Partial | `c14c07b`, `6a0ed09`; responsive design and Icon wrapper; actual Lucide/Phosphor installation and real 360px browser check remain unavailable |
+| M6 | Implemented | `6a0ed09`; five-column footer, legal/help/company/owner routes and back-to-top |
+| M7 | Implemented and API tested | `6a0ed09`; owner/visitor requests pending, private publicly, missing coordinates/hours left null |
+| M8 | Implemented and API tested | `6a0ed09`; private path, Argon2id, separate sessions, setup/env CLI, change password, lockout, inactivity, noindex, audits; optional TOTP absent |
+| M9 | Implemented and API tested | `6a0ed09`; pending count, shop filters/pagination, evidence, moderation, snapshots and guarded undo; stale undo rejects conflicts |
+| M10 | Implemented and API tested | `6a0ed09`; sourced CSV dry-run/apply, product editing/merge, field shop/actual stock observation, reports, stale/zero searches and demo archive |
+| M11 | Implemented | `6a0ed09`; database aggregate metrics/activity/CSV exports, no charts or counts fabricated |
+| M12 | Implemented | `6a0ed09`; one-tap/bulk confirmation, catalogue add/edit, rank parts, actual seven-day views/taps, stale banner |
+| M13 | Implemented and unit tested | `6a0ed09` plus final hardening checkpoint; stock decay, independent reports, availability tiers for every sort, invalid timestamps never fresh |
+| M14 | Partial | Local validation/CSRF/security headers/upload constraints/build/regression pass. Edge CDP timed out at `Page.enable`; visual/AA/Lighthouse/physical-4G checks and public hosting not passed |
+
+### Latest data state
+
+- **233 active sourced products/product families**, with source URLs and date, across Apple, Samsung, Xiaomi, vivo, OPPO, realme, Google, OnePlus, iQOO, Nothing, Motorola, HP, Dell, ASUS, Lenovo, Acer, LG, Sony and boAt. Selected families are not an exhaustive global SKU database; no generation/configuration/specification is inferred where missing. Some manufacturer items may be preorder listings.
+- **30 researched shop records**: original 18 plus 12 additions covering New Rehari, Channi Himmat, New Plot, City Chowk, Bari Brahmana, Nanak Nagar, Janipur, Sainik Colony, Satwari and Narwal, among existing areas. One existing owner-submitted shop is preserved separately.
+- Original-source results: nine checked online (four official, five third party); nine source retrieval failures retained unverified. Total sourced shop evidence: twelve official listing checks, nine online directory/index checks and nine unverified originals. **Zero owner/visit verification claims.** Official locator search results may be indexed; source notes disclose failed full-page fetches.
+- **Zero active sample shops/products/listings and zero real stock listings**. Archive/backup rows remain for recovery. No randomized stock, price, availability probability, rating, review, phone or coordinate was created.
+- `docs/shop-research.json` records unresolved sources and area gaps: Residency Road, Jewel Chowk, Nagrota, Digiana, Gangyal, Canal Road and Shastri Nagar still need stronger store-level sources/import review. Search results that merely list nearby businesses are not proof of the searched area.
+- Latest backup before additional shop imports: `backups/before-modifications-2026-10-16T11-48-05-012Z.*`, SQLite integrity `ok`.
+
+### Checks and limitations
+
+`npm.cmd test`: **30/30 pass**. Includes isolated admin setup, owner/admin isolation, lockout, password session revocation, passive polling/inactivity, visitor pending privacy, reversible moderation and stale undo conflicts, source import validation/idempotency, field stock evidence, no invented distances/stock, CSRF, real page-module rendering, Maps and availability/ranking boundaries. DOM shims exercise modules but do not establish real browser layout, focus or accessibility. `npm.cmd run build`: compiled runtime bundle and separate HTTP smoke test pass, including all imported browser modules.
+
+Warm localhost performance (20 requests each, 2026-10-16): p95 home 4.44ms, app JS 2.31ms/56,039 bytes, catalogue 18.8ms/141,027 bytes, shops 3.81ms, phone-category search 6.29ms. Reproduce with `node scripts/check-local-performance.mjs`; private report `.local/performance.json`. These measure HTTP responses, not rendering or mobile-network performance.
+
+User actions still required: choose admin credentials; confirm ownership/location/operating status of shops; obtain actual model/price/stock observations from shops; refresh incomplete/old sources; configure contact/email/recovery and HTTPS/public deployment for a public release. Native Sites/Vinext scaffold remains incomplete and undeployed. The running implementation is the existing Node/SQLite app. No permission or package-install success is implied by the user's authorization; restricted tool network access still applies.
+
 ## Resumed by explicit user instruction
 
 ## Latest scope: sourced catalogue and sample removal
