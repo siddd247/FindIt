@@ -6,7 +6,7 @@ import { DatabaseSync } from 'node:sqlite';
 import path from 'node:path';
 const base='http://127.0.0.1:3001',dir=mkdtempSync(path.resolve('.local/api-test-'));
 test('local API: authentication, approval, listings, confirmations, reports, and audit',async t=>{
- const proc=spawn(process.execPath,['local/server.mjs'],{cwd:process.cwd(),env:{...process.env,PORT:'3001',LOCAL_DATA_DIR:dir},windowsHide:true,stdio:['ignore','pipe','pipe']});t.after(()=>proc.kill());
+ const proc=spawn(process.execPath,['local/server.mjs'],{cwd:process.cwd(),env:{...process.env,SEED_SAMPLE_DATA:'1',PORT:'3001',LOCAL_DATA_DIR:dir},windowsHide:true,stdio:['ignore','pipe','pipe']});t.after(()=>proc.kill());
  await new Promise((resolve,reject)=>{let output='';const timeout=setTimeout(()=>reject(new Error('Server startup timed out: '+output)),12000);proc.stdout.on('data',c=>{output+=c;if(output.includes('running at')){clearTimeout(timeout);resolve();}});proc.stderr.on('data',c=>output+=c);proc.on('exit',code=>{clearTimeout(timeout);reject(new Error('Server exited '+code+': '+output));});});
  async function call(route,body,cookie='',origin=base){const r=await fetch(base+'/api/'+route,body?{method:'POST',headers:{'Content-Type':'application/json',Origin:origin,...(cookie?{Cookie:cookie}:{})},body:JSON.stringify(body)}:{headers:cookie?{Cookie:cookie}:{}});return {status:r.status,data:await r.json(),cookie:r.headers.get('set-cookie')?.split(';')[0]};}
  for(const asset of ['/icons.mjs','/maps.mjs']){const r=await fetch(base+asset);assert.equal(r.status,200);assert.match(r.headers.get('content-type'),/javascript/);}

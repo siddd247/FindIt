@@ -1,0 +1,11 @@
+ALTER TABLE products ADD COLUMN source_checked_at TEXT;
+ALTER TABLE products ADD COLUMN catalogue_status TEXT;
+ALTER TABLE products ADD COLUMN reference_price REAL;
+ALTER TABLE products ADD COLUMN reference_currency TEXT;
+ALTER TABLE products ADD COLUMN reference_price_source TEXT;
+ALTER TABLE products ADD COLUMN reference_checked_at TEXT;
+ALTER TABLE shops ADD COLUMN source_checked_at TEXT;
+ALTER TABLE shops ADD COLUMN source_check_type TEXT;
+ALTER TABLE shops ADD COLUMN source_check_note TEXT;
+ALTER TABLE shops ADD COLUMN rejection_reason TEXT;
+CREATE TABLE source_checks(id TEXT PRIMARY KEY,entity_type TEXT NOT NULL,entity_id TEXT NOT NULL,url TEXT NOT NULL,checked_at TEXT NOT NULL,result TEXT NOT NULL,note TEXT);

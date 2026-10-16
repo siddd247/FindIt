@@ -4,6 +4,10 @@ Run date: 2026-10-16. Follow `docs/EXECUTE-PROMPT.md`, not the old root progress
 
 ## Resumed by explicit user instruction
 
+## Latest scope: sourced catalogue and sample removal
+
+The user now explicitly authorizes web product/shop research, importing real catalogue data, adding sourced missing-area shops, and removing samples. Root AGENTS records this override. A verified backup was taken at `backups/before-modifications-2026-10-16T11-27-24-478Z.*`. New-only migration 002 adds evidence fields; migration 001 and original schemas are unchanged. `docs/catalogue-research.json` contains official source URLs and the 2026-10-16 check date. `scripts/apply-researched-catalogue.mjs` inserted 165 sourced names/product families. All active sample shops/products/listings (including the dependent sample-catalogue listing) were archived, not relabelled as real; owner shop/account records remain. Live catalogue has zero sample products and zero stock listings because no real shop inventory was supplied. Demo auto-seeding is disabled except explicit isolated test fixtures. No random availability or price was created. All 27 regression tests and runnable build pass. Latest phones/brand pages were checked online; some entries are source-listed families without a supplied generation/configuration/year, explicitly left empty.
+
 The user authorized continuing after the previous stop. The running application's build now packages the existing Node/SQLite implementation: shared TypeScript becomes executable JavaScript, application/schema/assets are bundled without private data, generated modules are validated, and a separate built server is exercised over HTTP. The previous unfinished hosted build is preserved as `build:hosted`. This is a runnable artifact build, not a substitute syntax-only check. Network package downloads still return EACCES. No stack switch or dependency version change was made.
 
 ## Checkpoints

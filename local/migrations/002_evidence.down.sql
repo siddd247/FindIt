@@ -1,0 +1,11 @@
+DROP TABLE source_checks;
+ALTER TABLE shops DROP COLUMN rejection_reason;
+ALTER TABLE shops DROP COLUMN source_check_note;
+ALTER TABLE shops DROP COLUMN source_check_type;
+ALTER TABLE shops DROP COLUMN source_checked_at;
+ALTER TABLE products DROP COLUMN source_checked_at;
+ALTER TABLE products DROP COLUMN catalogue_status;
+ALTER TABLE products DROP COLUMN reference_price;
+ALTER TABLE products DROP COLUMN reference_currency;
+ALTER TABLE products DROP COLUMN reference_price_source;
+ALTER TABLE products DROP COLUMN reference_checked_at;

@@ -21,7 +21,7 @@ function text(v,max=200){if(typeof v!=='string'||!v.trim()||v.length>max)fail(40
 function audit(actor,kind,target,details={}){run('INSERT INTO admin_actions(id,actor_id,kind,target_id,details,created_at) VALUES (?,?,?,?,?,?)',id(),actor,kind,target,JSON.stringify(details),now());}
 function insert(table,entry){const fields=Object.keys(entry);run(`INSERT OR IGNORE INTO ${table} (${fields.join(',')}) VALUES (${fields.map(()=>'?').join(',')})`,...Object.values(entry));}
 function seed(actor='system'){transaction(()=>{for(const [table,entries] of Object.entries(sampleData()))for(const entry of entries)insert(table,entry);audit(actor,'seed','sample-data',{shops:20,products:80});});}
-if(!one('SELECT id FROM categories LIMIT 1'))seed();
+if(!one('SELECT id FROM categories LIMIT 1')){if(process.env.SEED_SAMPLE_DATA==='1')seed();else for(const category of categories)insert('categories',category);}
 migrate(db);
 function rate(key,max=30,seconds=3600){const k=hash(key+':'+Math.floor(Date.now()/(seconds*1000)));run('INSERT INTO rate_limits VALUES (?,1,?) ON CONFLICT(id) DO UPDATE SET count=count+1',k,new Date(Date.now()+seconds*1000).toISOString());if(one('SELECT count FROM rate_limits WHERE id=?',k).count>max)fail(429,'Too many requests. Please try again later.');}
 function current(req){const token=req.headers.cookie?.match(/(?:^|; )nearby_session=([^;]+)/)?.[1];if(!token)return null;const u=one('SELECT users.id,users.email,users.role FROM users JOIN sessions ON sessions.user_id=users.id WHERE sessions.id=? AND sessions.expires_at>? AND users.deleted_at IS NULL',hash(token),now());return u?{...u,userId:u.id,displayName:u.email}:null;}

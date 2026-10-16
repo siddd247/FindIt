@@ -4,6 +4,8 @@ Follow docs/EXECUTE-PROMPT.md. It overrides the guide's original setup and step 
 
 Session update: the user explicitly authorized resuming after the earlier two-attempt stop. Continue the ordered milestones and repair prerequisites autonomously. The active application is the existing Node/SQLite/CSS runtime; a genuine compiled-and-smoke-tested build of that runtime is appropriate. Preserve the separate unfinished hosted build and report its limitations. This does not authorize erasing data, inventing real records, or bypassing tool permissions.
 
+Latest user scope: research and import real product catalogue and additional Jammu shops from web sources, remove sample/demo data from the active app after backup, and finish the remaining functionality. This supersedes the previous requirement to await supplied brand CSVs and retain visible samples. Archive sample records and their dependent listings, preserve backups/audits and owner shops. Never randomize or claim stock as real; online product existence, official online availability and Jammu shop stock are separate evidence. Never mark unverified shops owner-verified; record online-source checks explicitly with source/date. Continue useful implementation while documenting unavailable external dependencies rather than treating the optional icon-library choice as a new approval gate.
+
 ## PART A. MASTER RULES (read first, apply to every step)
 
 Paste this block as the first message and tell the builder it applies for the whole project.
