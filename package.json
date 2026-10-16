@@ -8,7 +8,8 @@
   "scripts": {
     "install:ci": "node scripts/install-ci.mjs",
     "dev": "node local/server.mjs",
-    "build": "node scripts/run-framework.mjs build",
+    "build": "node scripts/build-local.mjs",
+    "build:hosted": "node scripts/run-framework.mjs build",
     "start": "node local/server.mjs",
     "lint": "eslint . --ignore-pattern dist --ignore-pattern .next",
     "db:generate": "drizzle-kit generate",

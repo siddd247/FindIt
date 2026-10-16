@@ -2,6 +2,8 @@
 
 Follow docs/EXECUTE-PROMPT.md. It overrides the guide's original setup and step order: preserve the existing stack; execute M1-M14 sequentially and continue automatically after passing checks. The guide is the target specification. Stop and revert a failed milestone after two unsuccessful repair attempts. Never recreate the app or reset existing data. List exact files before every edit. Retain samples, labelled or hidden.
 
+Session update: the user explicitly authorized resuming after the earlier two-attempt stop. Continue the ordered milestones and repair prerequisites autonomously. The active application is the existing Node/SQLite/CSS runtime; a genuine compiled-and-smoke-tested build of that runtime is appropriate. Preserve the separate unfinished hosted build and report its limitations. This does not authorize erasing data, inventing real records, or bypassing tool permissions.
+
 ## PART A. MASTER RULES (read first, apply to every step)
 
 Paste this block as the first message and tell the builder it applies for the whole project.
