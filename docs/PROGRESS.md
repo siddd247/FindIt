@@ -15,8 +15,8 @@ The user authorized continuing after the previous stop. The running application'
 | M1: schema additions | done | `c529754` |
 | M2: sourced shop import | done | `5d6459e` |
 | M3: Google Maps everywhere | done | `4a559dd` |
-| M4: product import pipeline | done | See commit `feat: validate sourced brand CSV imports without loading products` |
-| M5: user redesign | not done | — |
+| M4: product import pipeline | done | `0deeafb` |
+| M5: user redesign | partial; library access/choice pending | See commit `ui: improve sourced shop cards and verify actual page rendering` |
 | M6: footer/static pages | not done | — |
 | M7: pending shop requests | not done | — |
 | M8: private admin foundation | not done | — |
@@ -36,6 +36,14 @@ The user authorized continuing after the previous stop. The running application'
 ## M3 — Google Maps
 
 ## M4 — product pipeline only
+
+## M5 — current UI checkpoint (partial)
+
+Files: `web/icons.mjs`, `web/app.js`, `web/styles.css`, `local/server.mjs`, `scripts/build-local.mjs`, `tests/api.test.mjs`, `tests/ui.test.mjs`, `tests/ui-runtime.test.mjs`, this log. Existing icon paths are centralized in an imported `Icon` wrapper with consistent stroke; they are **not claimed as Lucide**. Package registry and external library downloads remain inaccessible. An optional user question asks whether to keep existing icons temporarily; the library requirement remains incomplete until resolved.
+
+The visual layer now uses a warm rust accent/deep neutral, a system display/body font pair, richer sourced-shop cards, area/pincode filtering, readable primary details, explicit unknown prices/distance/confirmation/hours, responsive card grids, and Maps actions. Existing light/dark/reduced-motion behavior stays intact. Original styling was not reformatted. No unsourced data was added. A page-module integration test runs the actual browser JavaScript against an isolated API using minimal document shims, catching template/runtime exceptions on Home, sourced directory/detail, search and owner sign-in; it is **not a browser layout/accessibility test**. It found and fixed an unknown-hours display error. The build now verifies module URLs have JavaScript MIME types. Actual Edge launch failed with GPU-process errors; no screenshot, 360px visual pass, Lighthouse or accessibility pass is claimed.
+
+Current dev command is `npm.cmd run dev` because PowerShell blocks npm.ps1; it serves http://127.0.0.1:3000. The real sourced directory is /shops. Native PowerShell policy was not changed. Later milestones M6–M14 have not been started while M5's icon requirement remains pending.
 
 Files: `local/import-products.mjs`, `scripts/import-products.mjs`, `docs/products_template.csv`, `tests/import-products.test.mjs`, this log. Template contains headers only. Import requires official HTTPS URLs and explicit administrator approval of the brand's official host, supports aliases/variants/series/accessory compatibility, enforces catalogue year windows, rejects unlicensed image URLs, limits a reviewed batch to one brand, detects duplicates, records dry runs and row errors. No real product CSV exists and **no real products were loaded**. Tests use isolated, clearly named fixtures only. All 24 tests and the real executable build pass. User must supply official-source brand CSVs, Apple first; boundary-year release months need human review because the schema supplies launch year only.
 
