@@ -7,7 +7,7 @@ Run date: 2026-10-16. Follow `docs/EXECUTE-PROMPT.md`, not the old root progress
 | Milestone | Status | Commit |
 | --- | --- | --- |
 | Before modifications | done | `1acd7444240314b07506d98576a6c6b4d310bf1b` |
-| Section 1: setup and audit | done; build prerequisite failed | CHECKPOINT_PENDING |
+| Section 1: setup and audit | done; build prerequisite failed | `2e785cd0518089753e3f9fb65e1b4783f7c3eb90` |
 | M1: schema additions | not done | — |
 | M2: sourced shop import | not done | — |
 | M3: Google Maps everywhere | not done | — |
