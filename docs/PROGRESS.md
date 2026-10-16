@@ -13,8 +13,8 @@ The user authorized continuing after the previous stop. The running application'
 | Before modifications | done | `1acd7444240314b07506d98576a6c6b4d310bf1b` |
 | Section 1: setup and audit | done; build prerequisite failed | `2e785cd0518089753e3f9fb65e1b4783f7c3eb90` |
 | M1: schema additions | done | `c529754` |
-| M2: sourced shop import | done | See commit `feat: import sourced Jammu shops without invented availability` |
-| M3: Google Maps everywhere | not done | — |
+| M2: sourced shop import | done | `5d6459e` |
+| M3: Google Maps everywhere | done | See commit `feat: use validated Google Maps actions and anonymous tap counts` |
 | M4: product import pipeline | not done | — |
 | M5: user redesign | not done | — |
 | M6: footer/static pages | not done | — |
@@ -32,6 +32,10 @@ The user authorized continuing after the previous stop. The running application'
 ## M1 — schema additions
 
 ## M2 — sourced shops
+
+## M3 — Google Maps
+
+Files: `web/maps.mjs`, `tests/maps.test.mjs`, `web/index.html` (module loading), targeted `web/app.js` and `local/server.mjs` changes, this log. Shared link logic prefers a validated place link, then a supplied/generated Google search link using supplied address/pincode; absent location disables Maps with a tooltip. Directions use supplied name/address, not guessed coordinates. Buttons appear on directory cards, listing cards, shop details and map-associated shop links. Samples remain non-travelable. New-tab anchors use noopener. Direction clicks increment shop/day counters without personal information. All 21 tests and the executable build/built-server smoke pass, including M1/M2 and original owner/report/ranking regressions. Actual location verification is not claimed; Maps search URLs are searches, not confirmed pins.
 
 Files: `local/csv.mjs`, `local/import-shops.mjs`, `scripts/import-shops.mjs`, `tests/import-shops.test.mjs`, `docs/SHOPS-IMPORT-REPORT.json`, small directory/unknown-value changes in `local/server.mjs` and `web/app.js`, this log. All 18 supplied rows imported after dry run and a fresh verified backup. Re-running inserts zero and identifies all 18 duplicates. No product listings, prices, stock confirmations, coordinates, inferred hours or invented phone numbers were created. All source verification strings retained: all 18 unverified. `/shops` exposes a sourced directory; cards and detail visibly warn that stock is unconfirmed. Sample and owner-entered records remain intact. All 18 tests, including previous API and migration flows, pass; built runtime HTTP smoke passes. Import report includes row-level errors, duplicate handling, batches and warnings. Actual Google Maps verification remains the user's task.
 
