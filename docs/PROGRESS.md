@@ -4,7 +4,7 @@ Run date: 2026-10-16. Follow `docs/EXECUTE-PROMPT.md`, not the old root progress
 
 ## Current integration checkpoint
 
-Implementation checkpoint: `6a0ed09` (shared public/admin integration; M6–M12 were committed together rather than separate milestone commits). Current local URL: http://127.0.0.1:3000. Admin setup is intentionally unclaimed: run `node scripts/admin-url.mjs` locally and choose credentials. No secret is stored in this document.
+Implementation checkpoint: `6a0ed09` (shared public/admin integration; M6–M12 were committed together rather than separate milestone commits). Final hardening/checks checkpoint: `ef794e4`. Current local URL: http://127.0.0.1:3000. Admin setup is intentionally unclaimed: run `node scripts/admin-url.mjs` locally and choose credentials. No secret is stored in this document.
 
 | Milestone | Current status | Evidence / checkpoint |
 | --- | --- | --- |
@@ -20,8 +20,8 @@ Implementation checkpoint: `6a0ed09` (shared public/admin integration; M6–M12 
 | M10 | Implemented and API tested | `6a0ed09`; sourced CSV dry-run/apply, product editing/merge, field shop/actual stock observation, reports, stale/zero searches and demo archive |
 | M11 | Implemented | `6a0ed09`; database aggregate metrics/activity/CSV exports, no charts or counts fabricated |
 | M12 | Implemented | `6a0ed09`; one-tap/bulk confirmation, catalogue add/edit, rank parts, actual seven-day views/taps, stale banner |
-| M13 | Implemented and unit tested | `6a0ed09` plus final hardening checkpoint; stock decay, independent reports, availability tiers for every sort, invalid timestamps never fresh |
-| M14 | Partial | Local validation/CSRF/security headers/upload constraints/build/regression pass. Edge CDP timed out at `Page.enable`; visual/AA/Lighthouse/physical-4G checks and public hosting not passed |
+| M13 | Implemented and unit tested | `6a0ed09`, `ef794e4`; stock decay, independent reports, availability tiers for every sort, invalid timestamps never fresh |
+| M14 | Partial | `ef794e4`; local validation/CSRF/security headers/upload constraints/build/regression pass. Edge CDP timed out at `Page.enable`; visual/AA/Lighthouse/physical-4G checks and public hosting not passed |
 
 ### Latest data state
 
@@ -48,7 +48,7 @@ The user now explicitly authorizes web product/shop research, importing real cat
 
 The user authorized continuing after the previous stop. The running application's build now packages the existing Node/SQLite implementation: shared TypeScript becomes executable JavaScript, application/schema/assets are bundled without private data, generated modules are validated, and a separate built server is exercised over HTTP. The previous unfinished hosted build is preserved as `build:hosted`. This is a runnable artifact build, not a substitute syntax-only check. Network package downloads still return EACCES. No stack switch or dependency version change was made.
 
-## Checkpoints
+## Earlier checkpoints (historical; current statuses above)
 
 | Milestone | Status | Commit |
 | --- | --- | --- |
