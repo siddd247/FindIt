@@ -15,7 +15,17 @@ Open **http://127.0.0.1:3000**. The server binds only to this computer. Stop it 
 
 Owner accounts are created at **My shop → Create an account** and always have the owner role. Admin identities and sessions are separate. Owner passwords use scrypt; admin passwords use Argon2id. Email verification, password recovery and outbound email delivery are not connected. The runtime binds to localhost; public production hosting remains unfinished.
 
-Data persists in `.local/stock.sqlite`; uploaded photos live in `.local/uploads/` (or the selected `LOCAL_DATA_DIR`). Both are ignored by Git. Restarting preserves accounts and data. Demo records have been soft archived after verified backups; default startup does not create demo data. Isolated tests explicitly enable sample fixtures. No reviews, prices or stock are fabricated.
+Data persists in `.local/stock.sqlite`; uploaded photos live in `.local/uploads/` (or the selected `LOCAL_DATA_DIR`). Both are ignored by Git. Restarting preserves accounts and data. Demo records have been soft archived after verified backups; default startup does not create demo data. Isolated tests explicitly enable sample fixtures. No reviews or real stock confirmations are fabricated. User-authorized INR reference estimates and generated catalogue assignments are explicitly labelled.
+
+## Current catalogue and design checkpoint
+
+The active dataset contains 918 user-supplied product variants and 32 active shops. All 29,376 product/shop catalogue assignments are administratively approved; none confirms actual inventory. INR reference estimates come from the supplied USD estimates, converted and rounded, and are not current shop quotes. Original sourced records remain archived with backups.
+
+The current running preview is http://127.0.0.1:3001 . A legacy port-3000 preview forwards to it when its backend lacks assignment support. A newly started current server defaults to port 3000.
+
+Search has three views: Shop catalogues, Confirmed stock and Product variants. Shop matches open searchable shop catalogues; assignments remain labelled stock unconfirmed. The home page features distinct models across categories. Owner/admin forms include password visibility and accessible error feedback; saved-storage failures cannot prevent initial rendering. Shared spacing, typography, icons and responsive rules cover phone and laptop layouts.
+
+Validation: 50 tests pass and the compiled local runtime builds and passes its isolated HTTP smoke check. Live API/module checks pass for iPhone XR, iPhone 15 and MacBook. Actual browser viewport checks were blocked by the session approval policy; responsive visual behavior is not verified. Public hosting, durable hosted storage, email verification/recovery, a support contact, and verified product/stock evidence remain launch requirements. See [design audit](docs/DESIGN-AUDIT.md).
 
 ## Private admin setup
 
@@ -31,7 +41,7 @@ Alternatively set process variables `ADMIN_EMAIL` and `ADMIN_PASSWORD`, run `nod
 
 ## Sourced data and availability
 
-`docs/catalogue-research.json` records selected manufacturer product/family names, source URLs and check date. Some families lack generation/configuration/specifications; these remain unknown. This is not an exhaustive global SKU catalogue. Search distinguishes catalogue matches, relevant shops to contact, and actual confirmed stock listings. Currency filters stored INR/USD listings and never converts prices. Random stock is never generated.
+`docs/catalogue-research.json` records selected manufacturer product/family names, source URLs and check date. Some families lack generation/configuration/specifications; these remain unknown. This is not an exhaustive global SKU catalogue. Search distinguishes catalogue matches, relevant shops to contact, and actual confirmed stock listings. Currency filters stored INR/USD listings and never converts prices. Generated catalogue assignments are stored separately and never become real shop stock. The active catalogue now uses the user-supplied dataset described below.
 
 `docs/jammu_shops_seed.csv` preserves the original 18 shops. `docs/jammu_shops_researched.csv` adds sourced areas; `docs/shop-research.json` records successful checks, inaccessible sources and remaining area gaps. Official listing checks and third-party directory checks have different public labels; neither grants owner/visit verification. Imported shops have no stock until an owner or field agent supplies a real observation. Coordinates remain empty until supplied and confirmed; area/pincode filters never invent GPS coordinates.
 

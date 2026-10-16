@@ -1,4 +1,4 @@
-const CACHE='nearby-shell-v9';
-self.addEventListener('install',e=>e.waitUntil(caches.open(CACHE).then(c=>c.addAll(['/','/styles.css?v=20261016-admin-assignments','/app.js?v=20261016-admin-assignments','/public-content.mjs?v=20261016-admin-assignments','/simulation.mjs?v=20261016-admin-assignments','/icons.mjs','/maps.mjs','/admin.mjs','/icon.svg']))));
+const CACHE='nearby-shell-v10';
+self.addEventListener('install',e=>e.waitUntil(caches.open(CACHE).then(c=>c.addAll(['/','/styles.css?v=20261016-design-release','/app.js?v=20261016-design-release','/public-content.mjs?v=20261016-design-release','/simulation.mjs?v=20261016-design-release','/icons.mjs','/maps.mjs','/admin.mjs?v=20261016-design-release','/icon.svg']))));
 self.addEventListener('activate',e=>e.waitUntil(caches.keys().then(keys=>Promise.all(keys.filter(k=>k!==CACHE).map(k=>caches.delete(k))))));
 self.addEventListener('fetch',e=>{const u=new URL(e.request.url);if(u.origin!==location.origin||u.pathname.startsWith('/api/')||u.pathname.startsWith('/uploads/'))return;e.respondWith(fetch(e.request).catch(()=>caches.match(e.request).then(r=>r||(e.request.mode==='navigate'?caches.match('/'):Response.error()))));});
