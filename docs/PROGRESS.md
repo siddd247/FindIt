@@ -14,8 +14,8 @@ The user authorized continuing after the previous stop. The running application'
 | Section 1: setup and audit | done; build prerequisite failed | `2e785cd0518089753e3f9fb65e1b4783f7c3eb90` |
 | M1: schema additions | done | `c529754` |
 | M2: sourced shop import | done | `5d6459e` |
-| M3: Google Maps everywhere | done | See commit `feat: use validated Google Maps actions and anonymous tap counts` |
-| M4: product import pipeline | not done | — |
+| M3: Google Maps everywhere | done | `4a559dd` |
+| M4: product import pipeline | done | See commit `feat: validate sourced brand CSV imports without loading products` |
 | M5: user redesign | not done | — |
 | M6: footer/static pages | not done | — |
 | M7: pending shop requests | not done | — |
@@ -34,6 +34,10 @@ The user authorized continuing after the previous stop. The running application'
 ## M2 — sourced shops
 
 ## M3 — Google Maps
+
+## M4 — product pipeline only
+
+Files: `local/import-products.mjs`, `scripts/import-products.mjs`, `docs/products_template.csv`, `tests/import-products.test.mjs`, this log. Template contains headers only. Import requires official HTTPS URLs and explicit administrator approval of the brand's official host, supports aliases/variants/series/accessory compatibility, enforces catalogue year windows, rejects unlicensed image URLs, limits a reviewed batch to one brand, detects duplicates, records dry runs and row errors. No real product CSV exists and **no real products were loaded**. Tests use isolated, clearly named fixtures only. All 24 tests and the real executable build pass. User must supply official-source brand CSVs, Apple first; boundary-year release months need human review because the schema supplies launch year only.
 
 Files: `web/maps.mjs`, `tests/maps.test.mjs`, `web/index.html` (module loading), targeted `web/app.js` and `local/server.mjs` changes, this log. Shared link logic prefers a validated place link, then a supplied/generated Google search link using supplied address/pincode; absent location disables Maps with a tooltip. Directions use supplied name/address, not guessed coordinates. Buttons appear on directory cards, listing cards, shop details and map-associated shop links. Samples remain non-travelable. New-tab anchors use noopener. Direction clicks increment shop/day counters without personal information. All 21 tests and the executable build/built-server smoke pass, including M1/M2 and original owner/report/ranking regressions. Actual location verification is not claimed; Maps search URLs are searches, not confirmed pins.
 
