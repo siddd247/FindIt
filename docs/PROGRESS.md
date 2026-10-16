@@ -166,3 +166,21 @@ node local/server.mjs
 ```
 
 Open http://127.0.0.1:3000. Do not start a second process if the existing server already responds. Legacy admin route: `/admin`, using the existing account's role; it is not the future isolated private admin. Account secrets are not stored in these notes.
+
+
+## 2026-10-16: requested theme and icon fixes
+
+Implementation checkpoint: a69ad19. This entry supersedes the earlier visual-state notes for this bounded change.
+
+Files changed: web/styles.css, web/icons.mjs, web/app.js, web/admin.mjs, web/index.html, web/manifest.webmanifest, web/icon.svg, web/sw.js; this record in docs/PROGRESS.md.
+
+- Unified existing branding around forest green; removed competing terracotta overrides. Added semantic light/dark foreground, surface, action, warning, danger and map colors, including dark-aware stock badges and notices.
+- Added distinct tablet, watch, desktop, monitor, TV and accessory silhouettes and an appliance icon. All eleven categories now have unique icons instead of falling back to a storefront. Kept the existing shared decorative SVG wrapper, sizing, currentColor and consistent stroke. This remains the custom icon set, not a Lucide integration.
+- Added icons to the private admin menu. Retained category/action icons and the 44px theme switch on mobile. Updated sun/moon symbol, accessible label, pressed state, persisted selection and browser theme color on toggling. Updated favicon, app manifest and offline-cache version.
+- Assumption confirmed by user: consistent, clear icons; no request to make decorative icons independent actions. Existing data and inventory behavior unchanged.
+
+Validation: npm.cmd test passed 36/36; npm.cmd run build compiled and smoke-tested the local runtime successfully; git diff --check passed. Live home, directory, owner, CSS, JS, icon module, admin module, manifest and service worker returned HTTP 200. An additional module-level DOM harness exercised light-to-dark and dark-to-light transitions, labels, symbols, aria-pressed, localStorage and browser theme color. All eleven category paths were distinct. Nine semantic foreground/background pairs in both themes exceeded 4.5:1 in a calculated contrast check.
+
+Visual verification limit: installed Edge automation again timed out at Page.enable before screenshots or viewport checks. The DOM harness and color calculations are not a browser layout/accessibility pass. Browser layout at 360px and 1280px remains to be verified. Hosted framework build and public deployment were outside this local styling request.
+
+Open http://127.0.0.1:3000 and hard refresh (Ctrl+Shift+R) to bypass previously cached assets. Next recommended check: inspect home, search, directory and owner screens in both themes on desktop and phone.
