@@ -12,7 +12,7 @@ The user authorized continuing after the previous stop. The running application'
 | --- | --- | --- |
 | Before modifications | done | `1acd7444240314b07506d98576a6c6b4d310bf1b` |
 | Section 1: setup and audit | done; build prerequisite failed | `2e785cd0518089753e3f9fb65e1b4783f7c3eb90` |
-| M1: schema additions | not done | — |
+| M1: schema additions | done | See commit `feat: add reversible sourced-shop schema migration` |
 | M2: sourced shop import | not done | — |
 | M3: Google Maps everywhere | not done | — |
 | M4: product import pipeline | not done | — |
@@ -28,6 +28,12 @@ The user authorized continuing after the previous stop. The running application'
 | M14: hardening/regression | not done | — |
 
 ## Section 1 — what changed
+
+## M1 — schema additions
+
+Files: `local/migrate.mjs`, `local/migrations/001_sourced_shops.up.sql`, `local/migrations/001_sourced_shops.down.sql`, `scripts/migrate-local.mjs`, `tests/migrations.test.mjs`, targeted compatibility edits in `local/server.mjs` and `web/app.js`, this progress file. Old bootstrap/schema files were not edited. New tables include separate admins, admin sessions, import batches and anonymous shop counts. Shop source/Maps/verification/pincode/type fields and canonical statuses are present, as are product provenance/variant/compatibility fields. NULL coordinates are supported without inventing values.
+
+Checks: all 16 tests pass; executable local build and built-server HTTP smoke pass. Migration tested on an empty DB and on existing sample fixtures, preserving listings/prices/relations and reversing original statuses. Rollback refuses when newly added real data would be lost. A first regression caused by an old positional audit insert was fixed with explicit columns. Backup ran before live migration. Existing owner auth is unchanged; separate-admin authentication remains M8. Hosted scaffold remains unfinished. Migration maps approval `verified` to `active` and `suspended` to `on_hold`, retaining legacy values; real verification defaults to not_verified, never inferred from approval.
 
 Exact created/changed source files:
 
