@@ -1,0 +1,1 @@
+export default function NotFound(){return <main className="shell empty"><h1>This page couldn’t be found.</h1><p>Search for a product or head back home.</p><a className="button primary" href="/">Back to search</a></main>;}

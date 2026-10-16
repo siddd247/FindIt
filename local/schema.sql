@@ -1,0 +1,17 @@
+PRAGMA foreign_keys=ON;
+CREATE TABLE IF NOT EXISTS users(id TEXT PRIMARY KEY,email TEXT UNIQUE NOT NULL,password_hash TEXT NOT NULL,role TEXT NOT NULL DEFAULT 'owner',created_at TEXT NOT NULL,deleted_at TEXT);
+CREATE TABLE IF NOT EXISTS sessions(id TEXT PRIMARY KEY,user_id TEXT NOT NULL REFERENCES users(id),expires_at TEXT NOT NULL);
+CREATE TABLE IF NOT EXISTS categories(id TEXT PRIMARY KEY,name TEXT NOT NULL,deleted_at TEXT);
+CREATE TABLE IF NOT EXISTS shops(id TEXT PRIMARY KEY,owner_id TEXT REFERENCES users(id),name TEXT NOT NULL,address TEXT NOT NULL,area TEXT NOT NULL,city TEXT NOT NULL,lat REAL NOT NULL,lng REAL NOT NULL,phone TEXT NOT NULL,hours TEXT NOT NULL,photos TEXT NOT NULL DEFAULT '[]',categories TEXT NOT NULL DEFAULT '[]',status TEXT NOT NULL DEFAULT 'pending',verified_at TEXT,sample INTEGER NOT NULL DEFAULT 0,deleted_at TEXT);
+CREATE INDEX IF NOT EXISTS shops_location ON shops(city,lat,lng);
+CREATE INDEX IF NOT EXISTS shops_owner ON shops(owner_id);
+CREATE TABLE IF NOT EXISTS products(id TEXT PRIMARY KEY,brand TEXT NOT NULL,model TEXT NOT NULL,name TEXT NOT NULL,specs TEXT NOT NULL,photo TEXT,category_id TEXT REFERENCES categories(id),canonical_id TEXT,aliases TEXT NOT NULL DEFAULT '[]',sample INTEGER NOT NULL DEFAULT 0,deleted_at TEXT);
+CREATE TABLE IF NOT EXISTS listings(id TEXT PRIMARY KEY,shop_id TEXT NOT NULL REFERENCES shops(id),product_id TEXT NOT NULL REFERENCES products(id),price_min REAL NOT NULL,price_max REAL,currency TEXT NOT NULL DEFAULT 'INR',negotiable INTEGER NOT NULL DEFAULT 0,quantity INTEGER,status_reported TEXT NOT NULL,last_confirmed_at TEXT NOT NULL,confirmed_by TEXT NOT NULL,sample INTEGER NOT NULL DEFAULT 0,deleted_at TEXT);
+CREATE INDEX IF NOT EXISTS listings_product ON listings(product_id,shop_id);
+CREATE TABLE IF NOT EXISTS listing_events(id TEXT PRIMARY KEY,listing_id TEXT NOT NULL,actor_id TEXT NOT NULL,kind TEXT NOT NULL,before_json TEXT,after_json TEXT NOT NULL,created_at TEXT NOT NULL);
+CREATE TABLE IF NOT EXISTS reports(id TEXT PRIMARY KEY,listing_id TEXT NOT NULL REFERENCES listings(id),kind TEXT NOT NULL,device_hash TEXT NOT NULL,ip_hash TEXT NOT NULL,created_at TEXT NOT NULL,resolved_at TEXT);
+CREATE INDEX IF NOT EXISTS reports_listing ON reports(listing_id,created_at);
+CREATE TABLE IF NOT EXISTS reviews(id TEXT PRIMARY KEY,shop_id TEXT NOT NULL REFERENCES shops(id),user_id TEXT NOT NULL,rating INTEGER NOT NULL,body TEXT NOT NULL,created_at TEXT NOT NULL,deleted_at TEXT);
+CREATE TABLE IF NOT EXISTS search_logs(id TEXT PRIMARY KEY,query TEXT NOT NULL,results_count INTEGER NOT NULL,zero_result INTEGER NOT NULL,kind TEXT NOT NULL DEFAULT 'search',shop_id TEXT,created_at TEXT NOT NULL);
+CREATE TABLE IF NOT EXISTS admin_actions(id TEXT PRIMARY KEY,actor_id TEXT NOT NULL,kind TEXT NOT NULL,target_id TEXT NOT NULL,details TEXT NOT NULL,created_at TEXT NOT NULL);
+CREATE TABLE IF NOT EXISTS rate_limits(id TEXT PRIMARY KEY,count INTEGER NOT NULL,expires_at TEXT NOT NULL);
