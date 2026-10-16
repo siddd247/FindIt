@@ -184,3 +184,22 @@ Validation: npm.cmd test passed 36/36; npm.cmd run build compiled and smoke-test
 Visual verification limit: installed Edge automation again timed out at Page.enable before screenshots or viewport checks. The DOM harness and color calculations are not a browser layout/accessibility pass. Browser layout at 360px and 1280px remains to be verified. Hosted framework build and public deployment were outside this local styling request.
 
 Open http://127.0.0.1:3000 and hard refresh (Ctrl+Shift+R) to bypass previously cached assets. Next recommended check: inspect home, search, directory and owner screens in both themes on desktop and phone.
+
+
+## 2026-10-16: refined icons and phone/laptop usability
+
+Implementation checkpoint: ee37472. User requested better icons, mobile/laptop layouts and research into appropriate usage.
+
+Files changed: web/icons.mjs, web/styles.css, web/app.js, web/admin.mjs, web/public-content.mjs, web/sw.js, tests/browser-qa.mjs, docs/PROGRESS.md.
+
+- Researched official Lucide guidance at https://lucide.dev/guide/lucide and https://lucide.dev/how-to/accessibility and W3C target-size guidance at https://www.w3.org/WAI/WCAG22/Understanding/target-size-minimum.html. Applied visible labels, consistent semantics, decorative aria-hidden SVGs, clear contrast and 44px or larger primary interactive targets.
+- Registry/raw asset requests from the shell fail with EACCES. Web retrieval could read documentation but not retrieve installable assets. No Lucide package installation or library integration is claimed. The revised 45-symbol set is local SVG artwork, rendered offline through the existing Icon wrapper. Device silhouettes now use rounded screens, recognizable laptop bases, headphone cups, appliances and peripheral details. Wrapper validates sizes and falls back safely for unknown names.
+- Improved icon use in catalogue cards, manufacturer/source links, directory actions, map zoom/pan controls and admin navigation (overview/grid, catalogue/package, imports/upload, field/location, logout/exit). All eleven categories have distinct shapes.
+- Added native keyboard-accessible compact navigation below 1051px with five labelled destinations. Escape closes it and returns focus; outside clicks close it. The owner destination remains available in the menu when the narrow header hides its duplicate button. Filter disclosure exposes its state and restores focus after rendering.
+- Added phone/tablet/laptop grid breakpoints, full-width mobile search action, 16px mobile inputs, larger tap targets, readable card text, safe text wrapping, single-column phone catalogue/form layouts, roomier status controls and adaptive desktop filters. Preserved the existing forest-green themes and data behavior. Versioned the offline shell cache.
+
+Validation: final npm.cmd test passed 36/36; npm.cmd run build passed (compiled and smoke-tested local runtime); git diff --check passed. A module-level DOM harness rendered search in both themes and verified menu markup, Escape/focus return, outside-click dismissal, filter expansion/focus and device icons. Home, directory, owner and all affected served assets returned HTTP 200. Verified every literal icon call references a known symbol, all 45 symbols render decorative currentColor SVGs, category symbols are distinct, unsafe icon sizes do not inject markup, and CSS braces balance.
+
+Browser QA: expanded tests/browser-qa.mjs for widths 320, 360, 390, 768, 1024, 1366, 1440 in both themes, including overflow, 44px controls, readable input size and compact menu checks. Installed Edge again timed out at Page.enable before any rendering. These browser checks have NOT passed; no screenshots, device layout pass or complete accessibility pass is claimed. Run node tests/browser-qa.mjs from a working local browser-automation environment to finish this check.
+
+Preview: http://127.0.0.1:3000 (hard refresh with Ctrl+Shift+R). No public deployment was requested. Next recommended step: visual review of the phone and laptop layouts in both themes, then replace local artwork with a verified installed icon package when dependency access is available.
