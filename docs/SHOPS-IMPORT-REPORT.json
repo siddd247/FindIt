@@ -1,0 +1,103 @@
+{
+  "batch_id": "edfdb2d3-5dc2-4d21-8ebf-d6fa79c586fc",
+  "dry_run": false,
+  "total": 18,
+  "valid": 18,
+  "inserted": 18,
+  "duplicates": [],
+  "errors": [],
+  "unverified": [
+    {
+      "row": 2,
+      "name": "Cashify Buy, Sell and Repair Store - Gandhi Nagar",
+      "verification_status": "listing_found"
+    },
+    {
+      "row": 3,
+      "name": "Cashify Mobile Store - Gummat",
+      "verification_status": "listing_found"
+    },
+    {
+      "row": 4,
+      "name": "Arpit Electronix Shopee",
+      "verification_status": "listing_found"
+    },
+    {
+      "row": 5,
+      "name": "Phone Stop",
+      "verification_status": "listing_found"
+    },
+    {
+      "row": 6,
+      "name": "Flyfot Mobile Store",
+      "verification_status": "listing_found"
+    },
+    {
+      "row": 7,
+      "name": "Mobile Guru",
+      "verification_status": "listing_found"
+    },
+    {
+      "row": 8,
+      "name": "ASUS Exclusive Store - HR Enterprises",
+      "verification_status": "listing_found"
+    },
+    {
+      "row": 9,
+      "name": "HP World - Cyber Infotech Services",
+      "verification_status": "listing_found"
+    },
+    {
+      "row": 10,
+      "name": "HP World - Computer World",
+      "verification_status": "listing_found"
+    },
+    {
+      "row": 11,
+      "name": "JK Mobile (wholesale accessories)",
+      "verification_status": "listing_found"
+    },
+    {
+      "row": 12,
+      "name": "A.B.C Computers",
+      "verification_status": "listing_found"
+    },
+    {
+      "row": 13,
+      "name": "Hi Tech Computers",
+      "verification_status": "listing_found_partial_address"
+    },
+    {
+      "row": 14,
+      "name": "R.R. Traders",
+      "verification_status": "listing_found"
+    },
+    {
+      "row": 15,
+      "name": "Sanchit India Electronics",
+      "verification_status": "listing_found"
+    },
+    {
+      "row": 16,
+      "name": "Diya Electronics",
+      "verification_status": "listing_found"
+    },
+    {
+      "row": 17,
+      "name": "Royal Computers And Services",
+      "verification_status": "listing_found"
+    },
+    {
+      "row": 18,
+      "name": "E-Store (Talab Tillo)",
+      "verification_status": "listing_found"
+    },
+    {
+      "row": 19,
+      "name": "iSpace - Wave Mall (Apple reseller, VERIFY STILL OPERATING)",
+      "verification_status": "needs_verification_old_dealer_listing"
+    }
+  ],
+  "stock": "Not recently confirmed — no inventory supplied",
+  "coordinates": "Not available — not supplied"
+}

@@ -12,8 +12,8 @@ The user authorized continuing after the previous stop. The running application'
 | --- | --- | --- |
 | Before modifications | done | `1acd7444240314b07506d98576a6c6b4d310bf1b` |
 | Section 1: setup and audit | done; build prerequisite failed | `2e785cd0518089753e3f9fb65e1b4783f7c3eb90` |
-| M1: schema additions | done | See commit `feat: add reversible sourced-shop schema migration` |
-| M2: sourced shop import | not done | — |
+| M1: schema additions | done | `c529754` |
+| M2: sourced shop import | done | See commit `feat: import sourced Jammu shops without invented availability` |
 | M3: Google Maps everywhere | not done | — |
 | M4: product import pipeline | not done | — |
 | M5: user redesign | not done | — |
@@ -30,6 +30,10 @@ The user authorized continuing after the previous stop. The running application'
 ## Section 1 — what changed
 
 ## M1 — schema additions
+
+## M2 — sourced shops
+
+Files: `local/csv.mjs`, `local/import-shops.mjs`, `scripts/import-shops.mjs`, `tests/import-shops.test.mjs`, `docs/SHOPS-IMPORT-REPORT.json`, small directory/unknown-value changes in `local/server.mjs` and `web/app.js`, this log. All 18 supplied rows imported after dry run and a fresh verified backup. Re-running inserts zero and identifies all 18 duplicates. No product listings, prices, stock confirmations, coordinates, inferred hours or invented phone numbers were created. All source verification strings retained: all 18 unverified. `/shops` exposes a sourced directory; cards and detail visibly warn that stock is unconfirmed. Sample and owner-entered records remain intact. All 18 tests, including previous API and migration flows, pass; built runtime HTTP smoke passes. Import report includes row-level errors, duplicate handling, batches and warnings. Actual Google Maps verification remains the user's task.
 
 Files: `local/migrate.mjs`, `local/migrations/001_sourced_shops.up.sql`, `local/migrations/001_sourced_shops.down.sql`, `scripts/migrate-local.mjs`, `tests/migrations.test.mjs`, targeted compatibility edits in `local/server.mjs` and `web/app.js`, this progress file. Old bootstrap/schema files were not edited. New tables include separate admins, admin sessions, import batches and anonymous shop counts. Shop source/Maps/verification/pincode/type fields and canonical statuses are present, as are product provenance/variant/compatibility fields. NULL coordinates are supported without inventing values.
 
