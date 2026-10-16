@@ -22,6 +22,7 @@
   {"id":"shop-018","result":"online_source_checked","note":"Old INRDeals Apple dealer directory page for iSpace Wave Mall loaded. Current operation and reseller authorization remain unconfirmed; original warning retained."}
  ],
  "additional_source_note":"Sources include official HP/Samsung/Reliance pages and named third-party directories. Five Samsung entries are nearby-store references; individual pages returned 403. ASUS Nanak Nagar is an indexed official locator result; full page fetch failed. Coordinates and operational hours remain unknown. Source checks never confirm inventory or shop ownership.",
- "areas_still_needing_sources":["Residency Road","Jewel Chowk","Nagrota","Digiana","Gangyal","Canal Road","Shastri Nagar"],
+ "areas_still_needing_sources":["Residency Road","Nagrota","Digiana","Gangyal","Canal Road","Shastri Nagar"],
+ "2026_10_expansion_note":"Official Reliance indexed store listings identify Jewel Chowk and Kunjwani with addresses. Jewel full-page fetch failed; phone/hours left unknown. Kunjwani official listing publishes +918071890076. These are online store-directory checks, never physical or inventory verification.",
  "catalogue_limit":"Selected current official product/family names are imported, not an exhaustive SKU database. Manufacturer pages can vary by region/date and include preorder items. No local availability is asserted."
 }

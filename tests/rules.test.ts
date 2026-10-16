@@ -2,6 +2,7 @@ import test from 'node:test';
 import assert from 'node:assert/strict';
 import { availability,rank,compareBest,matchProduct,distanceKm,isOpen } from '../lib/rules.ts';
 import { sampleData } from '../lib/seed.ts';
+test('screen-size searches match MacBook inch labels without confusing numbered phone models',()=>{const mac={name:'Apple MacBook Pro (14-inch, M4, 2024)',brand:'Apple',model:'MacBook Pro (14-inch, M4, 2024)',aliases:'[]'};assert.ok(matchProduct(mac,'macbook pro 14 m4')>0);assert.equal(matchProduct(mac,'macbook pro 16 m4'),0);assert.equal(matchProduct({name:'Apple iPhone 15',brand:'Apple',model:'iPhone 15',aliases:'[]'},'iphone 1'),0);});
 test('missing, malformed and future confirmations never appear fresh or produce NaN scores',()=>{for(const stamp of ['', 'not-a-date',new Date(now+86400000).toISOString()]){const l={...base,last_confirmed_at:stamp},a=availability(l,[],now);assert.equal(a.key,'stale');assert.equal(a.confirmation,'Confirmation time: Not available');assert.equal(a.tier,1);assert.ok(Number.isFinite(rank(l,50,null,0,[],now).score));}});
 const now=Date.parse('2026-10-16T06:00:00Z');
 const base:any={id:'l1',shop_id:'s1',product_id:'p1',status_reported:'in_stock',last_confirmed_at:new Date(now-3600000).toISOString(),price_min:100,currency:'INR',price_max:null,negotiable:0,confirmed_by:'owner',sample:0};
