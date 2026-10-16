@@ -2,10 +2,10 @@ import { config } from './config.ts';
 export type Stock = 'in_stock' | 'low_stock' | 'out_of_stock';
 export type Listing = { id: string; shop_id: string; product_id: string; status_reported: Stock; last_confirmed_at: string; price_min: number; price_max: number | null; currency: string; negotiable: number; quantity?: number | null; confirmed_by: string; sample: number; };
 export type Report = { id?: string; listing_id: string; kind: string; device_hash: string; ip_hash: string; created_at: string; };
-export function hoursSince(date: string, now = Date.now()) { return Math.max(0, (now - new Date(date).getTime()) / 3600000); }
+export function hoursSince(date: string, now = Date.now()) { const stamp=date?Date.parse(date):NaN;return !Number.isFinite(stamp)||stamp>now+60000?Infinity:Math.max(0,(now-stamp)/3600000); }
 export function ago(date: string, now = Date.now()) { const h = hoursSince(date, now); return h < 1 ? `${Math.max(0, Math.floor(h * 60))} min ago` : h < 24 ? `${Math.floor(h)} hr ago` : `${Math.floor(h / 24)} days ago`; }
 export function availability(l: Listing, reports: Report[] = [], now = Date.now()) {
-  const age = hoursSince(l.last_confirmed_at, now);
+  const age = hoursSince(l.last_confirmed_at, now), known=Number.isFinite(age);
   const eligible = reports.filter(r => r.listing_id === l.id && Date.parse(r.created_at) > Date.parse(l.last_confirmed_at) && hoursSince(r.created_at, now) <= 48);
   // An IP or device can contribute at most once, even with a new cookie.
   const devices = new Set<string>(), ips = new Set<string>();
@@ -15,8 +15,8 @@ export function availability(l: Listing, reports: Report[] = [], now = Date.now(
   const disputed = negatives.length >= 2;
   const key = disputed ? 'community_out' : stale ? 'stale' : l.status_reported;
   const labels: Record<string,string> = { in_stock:'In stock', low_stock:'Low stock', out_of_stock:'Out of stock', community_out:'Reported out of stock by customers', stale:'Not recently confirmed' };
-  return { key, label: labels[key], ageHours: age, hidden: age > config.freshness.hiddenDays*24, stale, disputed,
-    caution: age > config.freshness.freshHours, confirmation: `Confirmed ${ago(l.last_confirmed_at,now)}`,
+  return { key, label: labels[key], ageHours: age, hidden: known && age > config.freshness.hiddenDays*24, stale, disputed,
+    caution: age > config.freshness.freshHours, confirmation: known ? `Confirmed ${ago(l.last_confirmed_at,now)}` : 'Confirmation time: Not available',
     community: positive ? `Customer confirmed ${ago(positive.created_at,now)}` : null,
     lastReported: l.status_reported.replaceAll('_',' '), tier: disputed || l.status_reported==='out_of_stock' ? 0 : stale ? 1 : l.status_reported==='low_stock' ? 2 : 3 };
 }

@@ -1,0 +1,27 @@
+{
+ "checked_at":"2026-10-16",
+ "policy":"Online source checks only. No phone call, owner verification, visit, stock confirmation, rating import or geocoding was performed. Nearby-store references are labelled as such. Inaccessible sources remain unverified.",
+ "checks":[
+  {"id":"shop-001","result":"official_source_checked","note":"Official Cashify store name/address/phone matched. Published hours conflict (10:00-21:00 versus 10:30-21:30); operational hours left unknown."},
+  {"id":"shop-002","result":"official_source_checked","note":"Official Cashify Gummat store page loaded and linked from Gandhi Nagar nearby-store section. No inventory inferred."},
+  {"id":"shop-003","result":"online_source_checked","note":"ThreeBestRated matches Arpit name, Gandhi Nagar address and category brands. Third-party ratings/reviews not imported."},
+  {"id":"shop-004","result":"online_source_checked","note":"ThreeBestRated matches Phone Stop, 378 A Gandhi Nagar. Published hours are ambiguous; no operational schedule inferred."},
+  {"id":"shop-005","result":"online_source_checked","note":"ThreeBestRated matches Flyfot, Gole Market near Pehalwan Di Hatti. No exact model stock inferred."},
+  {"id":"shop-006","result":"online_source_checked","note":"ThreeBestRated matches Mobile Guru, Apsara Road, Gandhi Nagar; repair/spares only. No new-phone inventory inferred."},
+  {"id":"shop-007","result":"source_unavailable","note":"Original ASUS locator URL could not be fetched. Original listing retained unverified; opening hours and store operation need confirmation."},
+  {"id":"shop-008","result":"official_source_checked","url":"https://www.hpworldstores.in/hp-world-cyber-infotech-services-laptop-store-gandhinagar-jammu-668/Home","phone":"+918657568572","note":"Official HP locator matches Cyber Infotech Services, 92 B/A near Sai Temple, Gandhi Nagar 180004; store number published."},
+  {"id":"shop-009","result":"official_source_checked","note":"Official HP contact page for Computer World loaded. Phone not available in readable source; left empty."},
+  {"id":"shop-010","result":"source_unavailable","note":"IndiaMART source inaccessible to research tool; original source retained, no verification granted."},
+  {"id":"shop-011","result":"source_unavailable","note":"IndiaMART source inaccessible to research tool; original source retained, no verification granted."},
+  {"id":"shop-012","result":"source_unavailable","note":"IndiaMART source inaccessible; original address is incomplete. Exact location needs shop confirmation."},
+  {"id":"shop-013","result":"source_unavailable","note":"IndiaMART source inaccessible to research tool; original source retained, no verification granted."},
+  {"id":"shop-014","result":"source_unavailable","note":"IndiaMART source inaccessible to research tool; original source retained, no verification granted."},
+  {"id":"shop-015","result":"source_unavailable","note":"IndiaMART source inaccessible to research tool; original source retained, no verification granted."},
+  {"id":"shop-016","result":"source_unavailable","note":"IndiaMART source inaccessible to research tool; original source retained, no verification granted."},
+  {"id":"shop-017","result":"source_unavailable","note":"IndiaMART source inaccessible to research tool; original source retained, no verification granted."},
+  {"id":"shop-018","result":"online_source_checked","note":"Old INRDeals Apple dealer directory page for iSpace Wave Mall loaded. Current operation and reseller authorization remain unconfirmed; original warning retained."}
+ ],
+ "additional_source_note":"Seven added stores appear on official HP/Samsung locator pages. Five Samsung entries are nearby-store references on the Channi Himmat page; their individual detail pages returned 403. Coordinates and operational hours are unknown.",
+ "areas_still_needing_sources":["Residency Road","Jewel Chowk","Janipur","Nanak Nagar","Sainik Colony","Satwari","Nagrota","Digiana","Gangyal","Narwal","Canal Road","Shastri Nagar"],
+ "catalogue_limit":"Selected current official product/family names are imported, not an exhaustive SKU database. Manufacturer pages can vary by region/date and include preorder items. No local availability is asserted."
+}
