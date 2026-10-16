@@ -1,0 +1,32 @@
+import { DatabaseSync } from 'node:sqlite';
+import { mkdirSync, writeFileSync, readFileSync } from 'node:fs';
+import { createHash } from 'node:crypto';
+import path from 'node:path';
+const source = path.resolve(process.env.LOCAL_DATA_DIR || '.local', 'stock.sqlite');
+const folder = path.resolve('backups');
+mkdirSync(folder, { recursive: true });
+const prefix = path.join(folder, 'before-modifications-' + new Date().toISOString().replace(/[:.]/g, '-'));
+const db = new DatabaseSync(source, { readOnly: true });
+db.prepare('VACUUM INTO ?').run(prefix + '.sqlite');
+db.close();
+const snapshot = new DatabaseSync(prefix + '.sqlite', { readOnly: true });
+const integrity = snapshot.prepare('PRAGMA integrity_check').get().integrity_check;
+if (integrity !== 'ok') throw new Error('Backup integrity check failed.');
+const schema = snapshot.prepare("SELECT name,type,sql FROM sqlite_master WHERE sql IS NOT NULL AND name NOT LIKE 'sqlite_%' ORDER BY CASE type WHEN 'table' THEN 0 ELSE 1 END,name").all();
+const quoteName = value => '"' + value.replaceAll('"', '""') + '"';
+const quoteValue = value => value === null ? 'NULL' : typeof value === 'number' || typeof value === 'bigint' ? String(value) : value instanceof Uint8Array ? "X'" + Buffer.from(value).toString('hex') + "'" : "'" + String(value).replaceAll("'", "''") + "'";
+const sql = ['PRAGMA foreign_keys=OFF;', 'BEGIN TRANSACTION;'];
+const counts = {};
+for (const entry of schema.filter(s => s.type === 'table')) {
+  sql.push(entry.sql + ';');
+  const rows = snapshot.prepare('SELECT * FROM ' + quoteName(entry.name)).all();
+  counts[entry.name] = rows.length;
+  for (const row of rows) sql.push('INSERT INTO ' + quoteName(entry.name) + ' (' + Object.keys(row).map(quoteName).join(',') + ') VALUES (' + Object.values(row).map(quoteValue).join(',') + ');');
+}
+for (const entry of schema.filter(s => s.type !== 'table')) sql.push(entry.sql + ';');
+sql.push('COMMIT;', 'PRAGMA foreign_keys=ON;');
+writeFileSync(prefix + '.sql', sql.join('\n') + '\n');
+snapshot.close();
+const sha256 = createHash('sha256').update(readFileSync(prefix + '.sqlite')).digest('hex');
+writeFileSync(prefix + '.json', JSON.stringify({ source, backup: prefix + '.sqlite', integrity, sha256, counts }, null, 2));
+console.log(JSON.stringify({ backup: prefix + '.sqlite', sql: prefix + '.sql', integrity, sha256, counts }, null, 2));

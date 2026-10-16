@@ -55,3 +55,6 @@ next-env.d.ts
 /outputs/
 /work/
 .local/
+
+# Database exports contain private account and shop records.
+/backups/
