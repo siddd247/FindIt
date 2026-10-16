@@ -1,6 +1,12 @@
 import {Icon} from './icons.mjs';
 const h=v=>String(v??'').replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
 const money=n=>new Intl.NumberFormat('en-IN',{style:'currency',currency:'INR',maximumFractionDigits:0}).format(n);
+export function simulationSearchMatches(data,params){
+ if(!data?.available||!data.rows?.length)return '';
+ const shops=[...new Map(data.rows.map(row=>[row.shop.id,row])).values()].slice(0,8);
+ const link='/simulation?'+params;
+ return '<section class="simulated-search" aria-label="Simulated shop matches"><div class="section-heading"><div><span class="eyebrow">RANDOMLY ASSIGNED DEMO STOCK</span><h2>Simulated shop matches</h2></div><a class="button" href="'+h(link)+'">View all simulated matches '+Icon('arrow',18)+'</a></div><p class="notice"><strong>These shops were randomly assigned this product for demonstration.</strong> This is not confirmed stock. INR amounts are catalogue estimates, not shop quotes. Real-stock, opening-hours and distance filters do not apply to this preview.</p><div class="simulated-shop-grid">'+shops.map(row=>{const query=new URLSearchParams(params);query.set('shop',row.shop.id);return '<article class="panel simulated-shop-card"><span class="badge low_stock">'+Icon('info',16)+'Simulated available</span><h3>'+Icon('store',19)+' '+h(row.shop.name)+'</h3><p class="muted">'+h(row.shop.area)+'</p><p>'+h(row.product.name)+'</p>'+(row.product.reference_currency==='INR'&&row.product.reference_price!=null?'<p><strong>'+h(money(row.product.reference_price))+'</strong><br><small class="muted">Estimated INR price; not a shop quote</small></p>':'')+'<a class="button" href="'+h('/simulation?'+query)+'">View assigned products '+Icon('arrow',17)+'</a></article>';}).join('')+'</div><p class="muted">Showing a preview of '+shops.length+' shops from '+data.total.toLocaleString('en-IN')+' simulated product/shop matches. Use “View all” to browse the complete distribution.</p></section>';
+}
 export function simulationContent(data,params){
  const notice='<p class="notice" role="note"><strong>SIMULATED INVENTORY</strong><br>'+h(data.notice)+'</p>';
  if(!data.available)return notice+'<p>'+h(data.message)+'</p><a class="button" href="/">Back to real catalogue</a>';

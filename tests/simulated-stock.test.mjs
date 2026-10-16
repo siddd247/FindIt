@@ -6,7 +6,7 @@ import path from 'node:path';
 import {migrate} from '../local/migrate.mjs';
 import {discover} from '../local/discovery.mjs';
 import {generateSimulatedStock,simulationInputs,querySimulatedStock} from '../local/simulated-stock.mjs';
-import {simulationContent} from '../web/simulation.mjs';
+import {simulationContent,simulationSearchMatches} from '../web/simulation.mjs';
 
 function fixture(){
  const db=new DatabaseSync(':memory:');db.exec(readFileSync('local/schema.sql','utf8'));migrate(db);
@@ -46,5 +46,15 @@ test('simulation page labels generated availability, escapes content, and carrie
   db.prepare("UPDATE products SET name='<script>Phone</script>' WHERE id='p-0'").run();const {products,shops}=simulationInputs(db);const data=generateSimulatedStock(products,shops,{year:2026,seed:'fixture'});writeFileSync(path.join(dir,'simulated-stock.json'),JSON.stringify(data));
   const result=querySimulatedStock(db,dir,new URLSearchParams());const html=simulationContent(result,new URLSearchParams({q:'<input>',shop:'shop-1'}));
   assert.match(html,/SIMULATED INVENTORY/);assert.match(html,/not confirmed shop stock/);assert.match(html,/No shop confirmation/);assert.match(html,/not a shop quote/);assert.match(html,/&lt;script&gt;/);assert.doesNotMatch(html,/<script>/);assert.match(html,/&lt;input&gt;/);assert.doesNotMatch(html,/data-confirm|data-report|tel:/);
+ }finally{db.close();}
+});
+
+test('ordinary search preview groups shop matches, preserves the query, and distinguishes simulated inventory',()=>{
+ const db=fixture(),dir=mkdtempSync(path.resolve('.local/simulation-test-'));try{
+  const {products,shops}=simulationInputs(db);const data=generateSimulatedStock(products,shops,{year:2026,seed:'search-preview'});writeFileSync(path.join(dir,'simulated-stock.json'),JSON.stringify(data));
+  const params=new URLSearchParams({q:'Fixture'}),result=querySimulatedStock(db,dir,params),html=simulationSearchMatches(result,params);
+  assert.match(html,/Simulated shop matches/);assert.match(html,/not confirmed stock/);assert.match(html,/not a shop quote/);assert.match(html,/simulation\?q=Fixture/);assert.match(html,/shop=shop-/);assert.doesNotMatch(html,/data-confirm|data-report/);
+  const displayed=[...html.matchAll(/<h3>.*?Fixture shop (\d+)/g)].map(m=>m[1]);assert.equal(displayed.length,new Set(displayed).size);assert.ok(displayed.length>0&&displayed.length<=8);
+  assert.equal(simulationSearchMatches({available:false},params),'');assert.equal(simulationSearchMatches({available:true,rows:[]},params),'');
  }finally{db.close();}
 });
