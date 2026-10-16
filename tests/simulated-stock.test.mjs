@@ -58,3 +58,16 @@ test('ordinary search preview groups shop matches, preserves the query, and dist
   assert.equal(simulationSearchMatches({available:false},params),'');assert.equal(simulationSearchMatches({available:true,rows:[]},params),'');
  }finally{db.close();}
 });
+
+test('admin approval covers every product/shop pair while retaining unconfirmed stock and estimate labels',()=>{
+ const db=fixture(),dir=mkdtempSync(path.resolve('.local/simulation-test-'));try{
+  const {products,shops}=simulationInputs(db),before=db.prepare('SELECT * FROM shops ORDER BY id').all();
+  const data=generateSimulatedStock(products,shops,{year:2026,seed:'approved-all',approveAll:true});
+  assert.equal(data.assignments.length,products.length*shops.length);assert.ok(data.assignments.every(a=>a.catalogue_approved===true&&a.simulated===true));assert.equal(data.summary.approval.status,'admin_approved');assert.equal(data.summary.approval.stock_confirmed,false);
+  for(const p of products)assert.equal(data.assignments.filter(a=>a.product_id===p.id).length,shops.length);
+  writeFileSync(path.join(dir,'simulated-stock.json'),JSON.stringify(data));const params=new URLSearchParams({q:'Phone 0'}),result=querySimulatedStock(db,dir,params);
+  assert.equal(result.total,shops.length);assert.ok(result.rows.every(r=>r.status==='admin_approved_stock_unconfirmed'&&r.confirmation===null));
+  for(const html of [simulationContent(result,params),simulationSearchMatches(result,params)]){assert.match(html,/Admin-approved/);assert.match(html,/stock unconfirmed/);assert.match(html,/not a shop quote/);assert.doesNotMatch(html,/Simulated available|data-confirm|data-report/);}
+  assert.deepEqual(db.prepare('SELECT * FROM shops ORDER BY id').all(),before);assert.equal(db.prepare('SELECT count(*) AS n FROM listings').get().n,0);assert.deepEqual(discover(db,new URLSearchParams()).listings,[]);
+ }finally{db.close();}
+});
