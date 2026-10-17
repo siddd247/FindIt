@@ -1,13 +1,14 @@
+import {makeTestDirectory as mkdtempSync,stopServer,freePort} from './helpers/runtime.mjs';
 import test from 'node:test';
 import assert from 'node:assert/strict';
 import {spawn} from 'node:child_process';
-import {mkdtempSync,readFileSync} from 'node:fs';
+import {readFileSync} from 'node:fs';
 import path from 'node:path';
 import {DatabaseSync} from 'node:sqlite';
 
 test('private admin setup, isolation, reversible moderation, lockout and inactivity',async t=>{
- const dir=mkdtempSync(path.resolve('.local/admin-test-')),base='http://127.0.0.1:3004';
- const proc=spawn(process.execPath,['local/server.mjs'],{env:{...process.env,SEED_SAMPLE_DATA:'0',PORT:'3004',LOCAL_DATA_DIR:dir},windowsHide:true,stdio:['ignore','pipe','pipe']});t.after(()=>proc.kill());
+ const port=await freePort(),dir=mkdtempSync(path.resolve('.local/admin-test-')),base='http://127.0.0.1:'+port;
+ const proc=spawn(process.execPath,['local/server.mjs'],{env:{...process.env,SEED_SAMPLE_DATA:'0',PORT:String(port),LOCAL_DATA_DIR:dir},windowsHide:true,stdio:['ignore','pipe','pipe','ipc']});t.after(()=>stopServer(proc));
  await new Promise((resolve,reject)=>{let output='';const timeout=setTimeout(()=>reject(Error(output)),10000);proc.stdout.on('data',s=>{output+=s;if(output.includes('running at')){clearTimeout(timeout);resolve();}});proc.once('error',reject);});
  const db=new DatabaseSync(path.join(dir,'stock.sqlite'));t.after(()=>db.close());
  const settings=JSON.parse(readFileSync(path.join(dir,'security.json'),'utf8'));

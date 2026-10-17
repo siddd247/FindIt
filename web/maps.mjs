@@ -3,7 +3,7 @@ export function validMapsUrl(value) {
   catch {return null;}
 }
 export function shopMapLinks(shop) {
-  if(shop.sample)return {open:null,directions:null,reason:'Sample location — do not visit'};
+  if(shop.sample)return {open:null,directions:null,reason:'Location not available'};
   const place=validMapsUrl(shop.google_maps_place_url);
   const address=typeof shop.address==='string'?shop.address.trim():'';
   const query=[shop.name,address,shop.city||'Jammu',shop.pincode].filter(Boolean).join(' ');

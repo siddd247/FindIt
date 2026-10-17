@@ -1,4 +1,4 @@
-const CACHE='nearby-shell-v11';
-self.addEventListener('install',e=>e.waitUntil(caches.open(CACHE).then(c=>c.addAll(['/','/styles.css?v=20261017-shop-prices','/app.js?v=20261017-shop-prices','/public-content.mjs?v=20261017-shop-prices','/simulation.mjs?v=20261017-shop-prices','/icons.mjs','/maps.mjs','/admin.mjs?v=20261017-shop-prices','/shop-pricing.mjs?v=20261017-shop-prices','/shop-pricing-config.mjs?v=20261017-shop-prices','/icon.svg']))));
+const CACHE='nearby-shell-v12';
+self.addEventListener('install',e=>e.waitUntil(caches.open(CACHE).then(c=>c.addAll(['/','/styles.css?v=20261017-final','/app.js?v=20261017-final','/public-content.mjs?v=20261017-final','/simulation.mjs?v=20261017-final','/icons.mjs','/maps.mjs','/admin.mjs?v=20261017-final','/shop-pricing.mjs?v=20261017-final','/shop-pricing-config.mjs?v=20261017-final','/theme.js?v=20261017-final','/icon.svg']))));
 self.addEventListener('activate',e=>e.waitUntil(caches.keys().then(keys=>Promise.all(keys.filter(k=>k!==CACHE).map(k=>caches.delete(k))))));
 self.addEventListener('fetch',e=>{const u=new URL(e.request.url);if(u.origin!==location.origin||u.pathname.startsWith('/api/')||u.pathname.startsWith('/uploads/'))return;e.respondWith(fetch(e.request).catch(()=>caches.match(e.request).then(r=>r||(e.request.mode==='navigate'?caches.match('/'):Response.error()))));});

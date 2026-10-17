@@ -1,7 +1,8 @@
+import {makeTestDirectory as mkdtempSync} from './helpers/runtime.mjs';
 import test from 'node:test';
 import assert from 'node:assert/strict';
 import {DatabaseSync} from 'node:sqlite';
-import {readFileSync,writeFileSync,mkdtempSync} from 'node:fs';
+import {readFileSync,writeFileSync} from 'node:fs';
 import path from 'node:path';
 import {migrate} from '../local/migrate.mjs';
 import {discover} from '../local/discovery.mjs';
@@ -45,7 +46,7 @@ test('simulation page labels generated availability, escapes content, and carrie
  const db=fixture(),dir=mkdtempSync(path.resolve('.local/simulation-test-'));try{
   db.prepare("UPDATE products SET name='<script>Phone</script>' WHERE id='p-0'").run();const {products,shops}=simulationInputs(db);const data=generateSimulatedStock(products,shops,{year:2026,seed:'fixture'});writeFileSync(path.join(dir,'simulated-stock.json'),JSON.stringify(data));
   const result=querySimulatedStock(db,dir,new URLSearchParams());const html=simulationContent(result,new URLSearchParams({q:'<input>',shop:'shop-1'}));
-  assert.match(html,/SIMULATED INVENTORY/);assert.match(html,/not confirmed shop stock/);assert.match(html,/No shop confirmation/);assert.match(html,/not a shop quote/);assert.match(html,/&lt;script&gt;/);assert.doesNotMatch(html,/<script>/);assert.match(html,/&lt;input&gt;/);assert.doesNotMatch(html,/data-confirm|data-report|tel:/);
+  assert.match(html,/STORE CATALOGUE/);assert.match(html,/confirm stock/);assert.match(html,/confirm availability/);assert.match(html,/not a shop quote/);assert.match(html,/&lt;script&gt;/);assert.doesNotMatch(html,/<script>/);assert.match(html,/&lt;input&gt;/);assert.doesNotMatch(html,/data-confirm|data-report|tel:/);
  }finally{db.close();}
 });
 
@@ -53,7 +54,7 @@ test('ordinary search preview groups shop matches, preserves the query, and dist
  const db=fixture(),dir=mkdtempSync(path.resolve('.local/simulation-test-'));try{
   const {products,shops}=simulationInputs(db);const data=generateSimulatedStock(products,shops,{year:2026,seed:'search-preview'});writeFileSync(path.join(dir,'simulated-stock.json'),JSON.stringify(data));
   const params=new URLSearchParams({q:'Fixture'}),result=querySimulatedStock(db,dir,params),html=simulationSearchMatches(result,params);
-  assert.match(html,/Simulated shop matches/);assert.match(html,/not confirmed stock/);assert.match(html,/not a shop quote/);assert.match(html,/simulation\?q=Fixture/);assert.match(html,/href="\/shops\/shop-\d+\?q=Fixture"/);assert.doesNotMatch(html,/data-confirm|data-report/);
+  assert.match(html,/Store catalogue matches/);assert.match(html,/not confirmed stock/);assert.match(html,/not a shop quote/);assert.match(html,/catalogues\?q=Fixture/);assert.match(html,/href="\/shops\/shop-\d+\?q=Fixture"/);assert.doesNotMatch(html,/data-confirm|data-report/);
   const displayed=[...html.matchAll(/<h3>.*?Fixture shop (\d+)/g)].map(m=>m[1]);assert.equal(displayed.length,new Set(displayed).size);assert.ok(displayed.length>0&&displayed.length<=8);
   assert.equal(simulationSearchMatches({available:false},params),'');assert.equal(simulationSearchMatches({available:true,rows:[]},params),'');
  }finally{db.close();}

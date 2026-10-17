@@ -54,6 +54,6 @@ test('unverified uploaded specs and INR estimates render escaped and never becom
  const db=fixture();try{
   replaceCatalogue(db,[row({specs:{color:'<script>alert(1)</script>'}})],{apply:true});const p=db.prepare('SELECT * FROM products WHERE deleted_at IS NULL').get();
   const facts=productFacts(p),cards=catalogueCards([p],Icon);
-  assert.match(facts,/User-supplied/);assert.match(facts,/Estimated INR price/);assert.match(facts,/&lt;script&gt;/);assert.doesNotMatch(facts,/<script>/);assert.match(cards,/Imported product catalogue/);assert.match(cards,/Estimated INR price/);assert.match(cards,/not a shop quote/);assert.doesNotMatch(cards,/MANUFACTURER CATALOGUE/);
+  assert.match(facts,/User-supplied/);assert.match(facts,/Market Indicative Price/);assert.match(facts,/&lt;script&gt;/);assert.doesNotMatch(facts,/<script>/);assert.match(cards,/Imported product catalogue/);assert.match(cards,/Market Indicative Price/);assert.match(cards,/not a shop quote/);assert.doesNotMatch(cards,/MANUFACTURER CATALOGUE/);
  }finally{db.close();}
 });

@@ -1,7 +1,7 @@
 import test from 'node:test';
 import assert from 'node:assert/strict';
 import {getShopPrices} from '../web/shop-pricing.mjs';
-import {SHOP_PRICING_CONFIG as config} from '../web/shop-pricing-config.mjs?v=20261017-shop-prices';
+import {SHOP_PRICING_CONFIG as config} from '../web/shop-pricing-config.mjs?v=20261017-final';
 import {simulationSearchMatches,shopAssignmentContent} from '../web/simulation.mjs';
 
 const shops=Array.from({length:32},(_,i)=>({id:'shop-'+i,name:'Shop '+i,area:'Jammu'}));

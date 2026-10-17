@@ -9,7 +9,7 @@ export function requireAdmin(db,req){const u=adminIdentity(db,req);if(!u)throw O
 export function adminCookie(value,maxAge=43200){return `nearby_admin=${value}; HttpOnly; SameSite=Strict; Path=/; Max-Age=${maxAge}${process.env.COOKIE_SECURE==='1'?'; Secure':''}`;}
 export function auditAdmin(db,actor,kind,target,details={},before=null,after=null){const id=randomUUID();db.prepare('INSERT INTO admin_actions(id,actor_id,kind,target_id,details,created_at,before_json,after_json) VALUES (?,?,?,?,?,?,?,?)').run(id,actor,kind,target,JSON.stringify(details),new Date().toISOString(),before?JSON.stringify(before):null,after?JSON.stringify(after):null);return id;}
 export function adminAuthRoutes({db,req,res,route,body,settings,json,rate}){
- if(route==='admin/session'){const user=adminIdentity(db,req);json(res,{user,needsSetup:!db.prepare('SELECT id FROM admins LIMIT 1').get()});return true;}
+ if(route==='admin/session'){if(req.method!=='GET')throw Object.assign(new Error('Method not allowed.'),{status:405});const user=adminIdentity(db,req);json(res,{user,needsSetup:!db.prepare('SELECT id FROM admins LIMIT 1').get()});return true;}
  if(!['admin/setup','admin/login','admin/logout','admin/password'].includes(route))return false;
  if(req.method!=='POST')throw Object.assign(new Error('Method not allowed.'),{status:405});
  const now=new Date().toISOString();rate('admin-auth:'+(req.socket.remoteAddress||'local'),20,900);

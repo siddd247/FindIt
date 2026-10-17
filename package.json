@@ -10,7 +10,7 @@
     "dev": "node local/server.mjs",
     "build": "node scripts/build-local.mjs",
     "build:hosted": "node scripts/run-framework.mjs build",
-    "start": "node local/server.mjs",
+    "start": "node scripts/start-local.mjs",
     "lint": "eslint . --ignore-pattern dist --ignore-pattern .next",
     "db:generate": "drizzle-kit generate",
     "dev:hosted": "node scripts/run-framework.mjs dev",

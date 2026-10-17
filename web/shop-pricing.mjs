@@ -1,4 +1,4 @@
-import {SHOP_PRICING_CONFIG as config} from './shop-pricing-config.mjs?v=20261017-shop-prices';
+import {SHOP_PRICING_CONFIG as config} from './shop-pricing-config.mjs?v=20261017-final';
 
 // FNV-1a seed followed by Mulberry32. Constants below belong to the PRNG,
 // not to pricing policy. Length-delimited JSON avoids ambiguous pair IDs.
@@ -22,7 +22,8 @@ export function getShopPrices(product, shops) {
  const valid = typeof base === 'number' && Number.isFinite(base) && base > 0;
  const lower = valid ? Math.ceil(base * config.clamp.min / config.currencyUnit) * config.currencyUnit : 0;
  const upper = valid ? Math.floor(base * config.clamp.max / config.currencyUnit) * config.currencyUnit : 0;
- const spread = config.categorySpreads[product.category_id ?? product.category] ?? config.defaultSpread;
+ const category = product.category_id ?? product.category;
+ const spread = Object.hasOwn(config.categorySpreads,category) ? config.categorySpreads[category] : config.defaultSpread;
  const personalities = Object.values(config.personalities);
  const day = config.drift.enabled ? new Date().toISOString().slice(0, 10) : '';
  const used = new Set();

@@ -16,9 +16,11 @@ export function migrate(db) {
   let changed=false;
   if (!db.prepare('SELECT version FROM schema_migrations WHERE version=1').get()) { execute(db, readFileSync(migration + 'up.sql','utf8') + "\nINSERT INTO schema_migrations VALUES (1,strftime('%Y-%m-%dT%H:%M:%fZ','now'));"); changed=true; }
   if (!db.prepare('SELECT version FROM schema_migrations WHERE version=2').get()) { execute(db, readFileSync(fileURLToPath(new URL('./migrations/002_evidence.up.sql',import.meta.url)),'utf8') + "\nINSERT INTO schema_migrations VALUES (2,strftime('%Y-%m-%dT%H:%M:%fZ','now'));"); changed=true; }
+  if (!db.prepare('SELECT version FROM schema_migrations WHERE version=3').get()) { execute(db, readFileSync(fileURLToPath(new URL('./migrations/003_release_indexes.up.sql',import.meta.url)),'utf8') + "\nINSERT INTO schema_migrations VALUES (3,strftime('%Y-%m-%dT%H:%M:%fZ','now'));"); changed=true; }
   return changed;
 }
 export function rollback(db) {
+  if (db.prepare('SELECT version FROM schema_migrations WHERE version=3').get()) execute(db,'DROP INDEX IF EXISTS sessions_active_owner; DROP INDEX IF EXISTS listings_shop_product_active; DROP INDEX IF EXISTS products_category_active; DROP INDEX IF EXISTS reports_listing_created; DROP INDEX IF EXISTS shops_active_area; DELETE FROM schema_migrations WHERE version=3;');
   if (db.prepare('SELECT version FROM schema_migrations WHERE version=2').get()) {
     if(db.prepare('SELECT count(*) AS n FROM source_checks').get().n)throw new Error('Rollback refused: source evidence must be preserved.');
     execute(db,readFileSync(fileURLToPath(new URL('./migrations/002_evidence.down.sql',import.meta.url)),'utf8')+'\nDELETE FROM schema_migrations WHERE version=2;');
