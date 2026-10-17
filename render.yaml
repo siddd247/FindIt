@@ -1,0 +1,24 @@
+services:
+  - type: web
+    name: nearbuy
+    runtime: node
+    region: singapore
+    plan: 0.5c-512mb
+    numInstances: 1
+    buildCommand: npm run build
+    startCommand: npm start
+    healthCheckPath: /healthz
+    autoDeployTrigger: commit
+    disk:
+      name: nearby-data
+      mountPath: /var/data
+      sizeGB: 1
+    envVars:
+      - key: NODE_ENV
+        value: production
+      - key: HOST
+        value: 0.0.0.0
+      - key: LOCAL_DATA_DIR
+        value: /var/data
+      - key: COOKIE_SECURE
+        value: "1"

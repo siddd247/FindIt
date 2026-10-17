@@ -17,6 +17,14 @@ The current review instance is http://127.0.0.1:3006 . Earlier loopback previews
 
 Data is kept in .local/stock.sqlite, photos in .local/uploads, and private setup settings in .local/security.json. These files and database backups are excluded from Git and builds. The server binds to this computer only. Use Ctrl+C for clean shutdown.
 
+## Deploy with persistent data
+
+The production target is Render, using the existing Node/SQLite runtime. From Render, create a Blueprint from this GitHub repository and review `render.yaml`. It pins Node 24, builds with `npm run build`, starts with `npm start`, checks `/healthz`, binds to the public interface, and mounts a paid 1 GB persistent disk at `/var/data`. The app build and runtime use Node's built-in modules and checked-in assets, so the hosted build does not need to install the unused framework scaffold. The SQLite database, uploaded shop photos, and private admin setup settings are all stored under that mount. Keep the service at one instance while it uses SQLite.
+
+The Blueprint needs a paid service because Render's free web services cannot attach persistent disks and sleep when idle. The disk preserves writes across restarts and deploys. Render makes daily snapshots, but deployments with a disk can have a brief interruption and cannot use zero-downtime deploys. Singapore is selected to place the service near Jammu. Add any custom hostname to the service's `ALLOWED_HOSTS` environment variable as a comma-separated list; Render's assigned hostname is allowed automatically. HTTPS session cookies are enabled for the deployed service.
+
+The first deploy creates a fresh database. The ignored local `.local/stock.sqlite`, accounts, and uploads are **not copied** to Render. Import or transfer the reviewed catalogue and shop data after deployment. To initialize the administrator, run `node scripts/admin-url.mjs` in the running service's shell and open the printed URL; it uses the deployed HTTPS address. Do not put a database backup or admin credentials in Git.
+
 ## Access
 
 - Shoppers: no account required. Search products, compare store catalogues, browse variants, view shops, get Maps directions and report actual inventory observations.
