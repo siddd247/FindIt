@@ -1,3 +1,4 @@
+import {runInThisContext} from 'node:vm';
 import test from 'node:test';
 import assert from 'node:assert/strict';
 import {spawn} from 'node:child_process';
@@ -77,7 +78,7 @@ test('filtered comparisons keep stable pair prices and select one eligible best 
 });
 
 test('actual UI handlers preserve theme, close suggestions and support arrow navigation and password visibility',async()=>{
- const keys=['fetch','location','document','window','navigator','localStorage'];
+ const keys=['fetch','location','document','window','navigator','localStorage','NearbyTheme'];
  const saved=Object.fromEntries(keys.map(key=>[key,Object.getOwnPropertyDescriptor(globalThis,key)]));
  try{
   const listeners={},attributes=new Map(),stored=new Map([['theme','dark']]);
@@ -91,15 +92,16 @@ test('actual UI handlers preserve theme, close suggestions and support arrow nav
   globalThis.window={addEventListener(){}};
   globalThis.document={documentElement:{dataset:{}},getElementById:()=>password,querySelector:s=>s==='#app'?app:s==='#product-search'?input:s==='#suggestions'?box:null,addEventListener:(type,handler)=>{(listeners[type]??=[]).push(handler);}};
   globalThis.fetch=async route=>Response.json(String(route).includes('/session')?{user:null}:String(route).includes('/catalogue')?directory:String(route).includes('/simulation')?{available:false}:{products:directory,listings:[],shops:[]});
+  runInThisContext(readFileSync('web/theme.js','utf8'));
   await import('../web/app.js?keyboard-release-check');await new Promise(resolve=>setTimeout(resolve,30));
   assert.equal(document.documentElement.dataset.theme,'dark');
   listeners.input[0]({target:input});assert.equal(box.hidden,false);
-  listeners.keydown[0]({target:input,key:'ArrowUp',preventDefault(){}});
+  listeners.keydown.at(-1)({target:input,key:'ArrowUp',preventDefault(){}});
   assert.equal(attributes.get('aria-activedescendant'),'suggestion-1');
-  listeners.keydown[0]({target:input,key:'Escape'});assert.equal(box.hidden,true);assert.equal(attributes.get('aria-expanded'),'false');
+  listeners.keydown.at(-1)({target:input,key:'Escape'});assert.equal(box.hidden,true);assert.equal(attributes.get('aria-expanded'),'false');
   listeners.input[0]({target:input});listeners.focusout[0]({target:input,relatedTarget:null});assert.equal(box.hidden,true);
   const button={dataset:{passwordToggle:'password'},setAttribute:(k,v)=>attributes.set(k,v),closest:selector=>selector==='button,a'?button:null};
-  await listeners.click[0]({target:button});assert.equal(password.type,'text');assert.equal(attributes.get('aria-pressed'),'true');
-  await listeners.click[0]({target:button});assert.equal(password.type,'password');
+  await listeners.click.at(-1)({target:button});assert.equal(password.type,'text');assert.equal(attributes.get('aria-pressed'),'true');
+  await listeners.click.at(-1)({target:button});assert.equal(password.type,'password');
  }finally{for(const [key,descriptor]of Object.entries(saved)){if(descriptor)Object.defineProperty(globalThis,key,descriptor);else delete globalThis[key];}}
 });

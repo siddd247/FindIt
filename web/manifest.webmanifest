@@ -1,1 +1,1 @@
-{"name":"Nearby Stock Finder","short_name":"Nearby","start_url":"/","display":"standalone","background_color":"#ffffff","theme_color":"#166c4b","icons":[{"src":"/icon.svg","sizes":"any","type":"image/svg+xml","purpose":"any"}]}
+{"name":"Nearby Stock Finder","short_name":"Nearby","start_url":"/","display":"standalone","background_color":"{{BACKGROUND}}","theme_color":"{{ACCENT}}","icons":[{"src":"/icon.svg","sizes":"any","type":"image/svg+xml","purpose":"any"}]}

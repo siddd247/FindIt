@@ -1,0 +1,178 @@
+/* All authored interface colors and design primitives live here. */
+@font-face{font-family:Inter;src:url('/fonts/Inter-Regular.ttf') format('truetype');font-style:normal;font-weight:100 500;font-display:swap}
+@font-face{font-family:Inter;src:url('/fonts/Inter-SemiBold.ttf') format('truetype');font-style:normal;font-weight:501 650;font-display:swap}
+@font-face{font-family:Inter;src:url('/fonts/Inter-Bold.ttf') format('truetype');font-style:normal;font-weight:651 900;font-display:swap}
+
+:root {
+  color-scheme:light;
+  --background:#f6f7fb;
+  --surface:#ffffff;
+  --surface-raised:#ffffff;
+  --surface-muted:#f0f2f7;
+  --border:#b7c0ce;
+  --control-border:#758299;
+  --text:#18202f;
+  --text-muted:#536174;
+  --success:#166340;
+  --success-surface:#e8f5ec;
+  --success-border:#628d72;
+  --warning:#815000;
+  --warning-surface:#fff4d9;
+  --warning-border:#aa7c30;
+  --danger:#a52a38;
+  --danger-surface:#ffedf0;
+  --danger-border:#bd6671;
+  --unavailable:#4c5c72;
+  --unavailable-surface:#e8edf4;
+  --unavailable-border:#7a879a;
+  --overlay:#10141d80;
+  --shadow-color:#10141d14;
+  --shadow-subtle-color:#10141d08;
+  --shadow-strong-color:#10141d29;
+  --map-land:#e9edf3;
+  --map-road:#ffffff;
+  --map-water:#bdd3e7;
+  --map-bank:#d1dfed;
+  --map-label:#455b70;
+  --font-body:Inter,ui-sans-serif,system-ui,-apple-system,BlinkMacSystemFont,'Segoe UI',sans-serif;
+  --font-heading:var(--font-body);
+  --font-weight-normal:400;
+  --font-weight-semibold:600;
+  --font-weight-bold:700;
+  --text-xs:.75rem;
+  --text-sm:.875rem;
+  --text-base:1rem;
+  --text-lg:1.125rem;
+  --text-xl:1.25rem;
+  --text-2xl:1.5rem;
+  --text-3xl:2rem;
+  --text-4xl:2.5rem;
+  --line-height-body:1.6;
+  --line-height-heading:1.2;
+  --space-1:4px;
+  --space-2:8px;
+  --space-3:12px;
+  --space-4:16px;
+  --space-5:20px;
+  --space-6:24px;
+  --space-8:32px;
+  --space-10:40px;
+  --space-12:48px;
+  --space-16:64px;
+  --content-width:1280px;
+  --radius-sm:6px;
+  --radius-md:10px;
+  --radius-lg:16px;
+  --radius:var(--radius-md);
+  --shadow-sm:0 2px 8px var(--shadow-subtle-color);
+  --shadow:0 12px 32px var(--shadow-color);
+  --shadow-raised:0 16px 48px var(--shadow-strong-color);
+  --motion-fast:140ms;
+  --motion-normal:180ms;
+  --accent:var(--accent-light);
+  --accent-hover:var(--accent-hover-light);
+  --accent-contrast:var(--accent-contrast-light);
+  --accent-surface:var(--accent-surface-light);
+  --accent-ring:var(--accent-ring-light);
+  --chart-1:var(--accent);
+  --chart-2:var(--success);
+  --chart-3:var(--warning);
+  --chart-4:var(--danger);
+  --chart-5:var(--unavailable);
+  /* Existing views share this palette until component classes are consolidated. */
+  --bg:var(--surface);
+  --canvas:var(--background);
+  --ink:var(--text);
+  --muted:var(--text-muted);
+  --line:var(--border);
+  --green:var(--accent);
+  --pale:var(--accent-surface);
+  --amber:var(--warning);
+  --accent-pale:var(--accent-surface);
+  --deep:var(--text);
+  --action:var(--accent);
+  --action-hover:var(--accent-hover);
+  --on-action:var(--accent-contrast);
+  --danger-bg:var(--danger-surface);
+  --warning-bg:var(--warning-surface);
+  --warning-line:var(--warning-border);
+  --success-bg:var(--success-surface);
+  --neutral-bg:var(--surface-muted);
+}
+:root[data-theme=dark] {
+  color-scheme:dark;
+  --background:#10141d;
+  --surface:#181e2a;
+  --surface-raised:#222a39;
+  --surface-muted:#202837;
+  --border:#46536a;
+  --control-border:#718099;
+  --text:#edf0f7;
+  --text-muted:#abb6c8;
+  --success:#8bdeb2;
+  --success-surface:#16392b;
+  --success-border:#5c9a77;
+  --warning:#f3cb7b;
+  --warning-surface:#3a2b15;
+  --warning-border:#b28d48;
+  --danger:#ffadb6;
+  --danger-surface:#421e2a;
+  --danger-border:#bf7280;
+  --unavailable:#c2ccdc;
+  --unavailable-surface:#2a3344;
+  --unavailable-border:#8795ad;
+  --overlay:#060912b3;
+  --shadow-color:#00000040;
+  --shadow-subtle-color:#00000029;
+  --shadow-strong-color:#00000066;
+  --map-land:#252f3e;
+  --map-road:#4b586d;
+  --map-water:#284962;
+  --map-bank:#345770;
+  --map-label:#c2d0e0;
+  --accent:var(--accent-dark);
+  --accent-hover:var(--accent-hover-dark);
+  --accent-contrast:var(--accent-contrast-dark);
+  --accent-surface:var(--accent-surface-dark);
+  --accent-ring:var(--accent-ring-dark);
+}
+/* One labelled block defines a new accent in both modes; the picker discovers it. */
+:root, :root[data-accent="indigo"], .theme-accent-group [data-accent="indigo"] {
+  --theme-label:"Indigo";
+  --accent-light:#4338ca;
+  --accent-dark:#b5b0ff;
+  --accent-hover-light:#3730a3;
+  --accent-hover-dark:#cecaff;
+  --accent-contrast-light:#ffffff;
+  --accent-contrast-dark:#191544;
+  --accent-surface-light:#eeedff;
+  --accent-surface-dark:#292446;
+  --accent-ring-light:#4338ca;
+  --accent-ring-dark:#b5b0ff;
+}
+:root[data-accent="emerald"], .theme-accent-group [data-accent="emerald"] {
+  --theme-label:"Emerald";
+  --accent-light:#08664f;
+  --accent-dark:#75dfb7;
+  --accent-hover-light:#07543f;
+  --accent-hover-dark:#a2edcf;
+  --accent-contrast-light:#ffffff;
+  --accent-contrast-dark:#082e23;
+  --accent-surface-light:#e3f5ee;
+  --accent-surface-dark:#183b31;
+  --accent-ring-light:#08664f;
+  --accent-ring-dark:#75dfb7;
+}
+:root[data-accent="amber"], .theme-accent-group [data-accent="amber"] {
+  --theme-label:"Amber";
+  --accent-light:#885000;
+  --accent-dark:#f3c66d;
+  --accent-hover-light:#6d4000;
+  --accent-hover-dark:#ffdb94;
+  --accent-contrast-light:#ffffff;
+  --accent-contrast-dark:#352107;
+  --accent-surface-light:#fff3d6;
+  --accent-surface-dark:#3c301d;
+  --accent-ring-light:#885000;
+  --accent-ring-dark:#f3c66d;
+}
