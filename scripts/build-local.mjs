@@ -45,7 +45,7 @@ try {
     proc.stderr.on('data', c => { log += c; });
     proc.once('exit', code => { clearTimeout(timeout); reject(new Error('Built server exited ' + code + ': ' + log)); });
   });
-  for (const route of ['/', '/simulation', '/simulation.mjs', '/api/simulation', '/app.js', '/admin.mjs', '/public-content.mjs', '/icons.mjs', '/maps.mjs', '/styles.css', '/api/session', '/api/catalogue', '/api/search?q=iphn%2015']) {
+  for (const route of ['/', '/simulation', '/simulation.mjs', '/shop-pricing.mjs', '/shop-pricing-config.mjs', '/api/simulation', '/app.js', '/admin.mjs', '/public-content.mjs', '/icons.mjs', '/maps.mjs', '/styles.css', '/api/session', '/api/catalogue', '/api/search?q=iphn%2015']) {
     const response = await fetch('http://127.0.0.1:3099' + route);
     if (route.endsWith('.mjs') && !response.headers.get('content-type')?.includes('javascript')) throw new Error('Module is not served as JavaScript: '+route);
     if (!response.ok) throw new Error('Built route failed: ' + route + ' ' + response.status);

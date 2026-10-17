@@ -61,7 +61,7 @@ test('actual search module separates assigned shops, confirmed stock and product
   assert.match(result.stdout,/data-results-view="shops"/);
   assert.match(result.stdout,/data-results-view="confirmed"/);
   assert.match(result.stdout,/data-results-view="products"/);
-  if(view==='shops'){assert.match(result.stdout,/Fixture shop 0/);assert.doesNotMatch(result.stdout,/No confirmed stock listings/);}
+  if(view==='shops'){assert.match(result.stdout,/Fixture shop \d+/);assert.doesNotMatch(result.stdout,/No confirmed stock listings/);}
   if(view==='confirmed'){assert.match(result.stdout,/No confirmed stock listings/);assert.doesNotMatch(result.stdout,/class="panel simulated-shop-card"/);}
   if(view==='products'){assert.match(result.stdout,/class="panel catalogue-card"/);assert.doesNotMatch(result.stdout,/No confirmed stock listings/);}
  }

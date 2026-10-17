@@ -21,11 +21,21 @@ Data persists in `.local/stock.sqlite`; uploaded photos live in `.local/uploads/
 
 The active dataset contains 918 user-supplied product variants and 32 active shops. All 29,376 product/shop catalogue assignments are administratively approved; none confirms actual inventory. INR reference estimates come from the supplied USD estimates, converted and rounded, and are not current shop quotes. Original sourced records remain archived with backups.
 
-The current running preview is http://127.0.0.1:3001 . A legacy port-3000 preview forwards to it when its backend lacks assignment support. A newly started current server defaults to port 3000.
+The current running preview is http://127.0.0.1:3002 . Legacy loopback previews forward from port 3000 to 3001 for assignment support, and from 3001 to 3002 when pricing modules are unavailable. A newly started current server defaults to port 3000.
 
 Search has three views: Shop catalogues, Confirmed stock and Product variants. Shop matches open searchable shop catalogues; assignments remain labelled stock unconfirmed. The home page features distinct models across categories. Owner/admin forms include password visibility and accessible error feedback; saved-storage failures cannot prevent initial rendering. Shared spacing, typography, icons and responsive rules cover phone and laptop layouts.
 
 Validation: 50 tests pass and the compiled local runtime builds and passes its isolated HTTP smoke check. Live API/module checks pass for iPhone XR, iPhone 15 and MacBook. Actual browser viewport checks were blocked by the session approval policy; responsive visual behavior is not verified. Public hosting, durable hosted storage, email verification/recovery, a support contact, and verified product/stock evidence remain launch requirements. See [design audit](docs/DESIGN-AUDIT.md).
+
+## Generated shop price estimates
+
+Edit all price behavior in [web/shop-pricing-config.mjs](web/shop-pricing-config.mjs): shop personality ranges, category spreads/default, 85%-115% clamp, ending styles, tie step, optional daily drift and optional out-of-stock rate. Drift and simulated out-of-stock are disabled by default. Reload after config edits; bump versioned asset URLs for a published release.
+
+Reusable getShopPrices(product, shops) lives in web/shop-pricing.mjs. It accepts base_price (or the unchanged existing reference_price) and category_id/category. It never mutates inputs or writes to the database. Stable shop IDs assign a fixed personality and ending style; product/shop IDs seed jitter. Pass the complete shop directory to keep tie resolution consistent across filtered views. Prices round to whole INR, then shop endings, then clamp; collisions nudge by INR 1 within bounds. Very small ranges can have unavoidable ties; missing/nonpositive prices remain unavailable. Optional drift uses the UTC date. Optional inStock describes simulation only and never asserts observed stock.
+
+Search and product pages compare one exact variant across all assigned shops, sorted by estimated price. They show the lowest estimate, each shop estimate and a best-price badge. Broad queries identify the compared variant and link other matches separately. Shop pages use the same estimate for the same pair; base reference details stay unchanged. Amounts remain explicitly generated estimates, not confirmed shop quotes. No product, brand or model name is special-cased.
+
+Validation: 53 tests pass and the local build passes, including JavaScript delivery of both new pricing modules. A full live-data check covered 918 products x 32 shops: all 29,376 prices stayed within bounds, each product had 32 distinct prices, and repeated calls were identical. Live module checks verified sorted shop estimates/best-price badges for phone, laptop and charger searches. Browser visual verification remains unavailable in this environment.
 
 ## Private admin setup
 
