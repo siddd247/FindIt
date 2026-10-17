@@ -320,3 +320,5 @@ Final validation for this release pass: 56/56 automated tests pass, compiled loc
 ## 2026-10-17: parent catalogue phase 1
 
 User approved restructure decisions and explicitly confirmed shop-user deletion count zero. Completed additive migration 004 and source-preserving grouping: 164 parent products / 918 variants / 41 single-variant parents / 431 archived source records kept separate. Created 29,376 seed-tagged approved offers, seed distribution and reversible approval tracking; all seven pending-queue counts zero. Every variant has an available shop; all shops have four stock statuses. No shop-user accounts deleted; both admin records preserved. All 59 tests and local build passed. See docs/CATALOGUE-RESTRUCTURE.md.
+
+Parent catalogue phase 2: 61 tests/build pass; 918 active redirects, 431 archive noindex pages and 933 option combinations verified. Buyer grouped cards/selectors, internal shop category drill-down, /control and canonical/structured metadata implemented.

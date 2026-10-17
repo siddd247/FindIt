@@ -23,3 +23,9 @@ Commands:
 Migration and seed commands back up before application. Seeding/re-rolling affects seed offers and recorded seed approval changes; shop-authored offers are preserved. Account deletion requires the exact reviewed count and hash.
 
 Phase 1 validation: 59 tests and compiled build passed; no unmapped active variants, invalid defaults, empty parents, invalid mappings, orphan offers or foreign-key violations. Old URL HTTP redirects and option-interaction checks follow in Phase 2. Missing images: all 164 parents, intentionally empty.
+
+## Phase 2
+
+Buyer model search/cards, dependent selectors, internal shop/category navigation and shop-specific variant pricing are implemented. Active legacy variants return 301 with variant preselected; parent ID URLs canonicalize to slugs. All 431 archived IDs return 410 with noindex, suggestions and category navigation. /control is the admin entry; prior private path redirects. Parent pages include canonical URLs and aggregate price structured data.
+
+Validation: 61 tests and compiled build pass. Live verification checked all 918 active redirects, 431 archive responses, 164 parents and 933 selector combinations, with no server stderr. Availability sorting excludes out-of-stock/unavailable offers from Best price. Real browser layout remains unverified.
