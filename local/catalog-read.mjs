@@ -28,7 +28,13 @@ export function listModels(db,params=new URLSearchParams()){
  }
  for(const key of Object.keys(facets.axes))facets.axes[key]=[...new Set(facets.axes[key])].sort((a,b)=>a.localeCompare(b,undefined,{numeric:true}));
  models.sort((a,b)=>(a.from_price??Infinity)-(b.from_price??Infinity)||a.name.localeCompare(b.name));
- return {models,facets,total:models.length};
+ const pageParam=params.get('page'),limitParam=params.get('limit'),total=models.length;
+ if(pageParam||limitParam){
+  const page=Math.max(1,parseInt(pageParam,10)||1),limit=Math.max(1,Math.min(100,parseInt(limitParam,10)||12));
+  const offset=(page-1)*limit,paginated=models.slice(offset,offset+limit);
+  return {models:paginated,facets,total,page,limit,hasMore:offset+paginated.length<total};
+ }
+ return {models,facets,total,hasMore:false};
 }
 export function getModel(db,idOrSlug,shopId=''){
  let raw=db.prepare('SELECT * FROM catalog_products WHERE id=? OR slug=?').get(idOrSlug,idOrSlug);const visited=new Set();while(raw?.redirect_to){if(visited.has(raw.id))throw Error('Circular product redirect.');visited.add(raw.id);raw=db.prepare('SELECT * FROM catalog_products WHERE id=?').get(raw.redirect_to);}const p=raw&&!raw.deleted_at&&raw.approval_status==='approved'?decode(raw):null;

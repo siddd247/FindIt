@@ -62,6 +62,8 @@
   --space-16:64px;
   --content-width:1280px;
   --site-header-height:76px;
+  --navbar-bg:rgba(255, 255, 255, 0.78);
+  --navbar-border:rgba(255, 255, 255, 0.4);
   --sticky-offset:calc(var(--site-header-height) + var(--space-6));
   --comparison-max-height:calc(100dvh - var(--site-header-height) - var(--space-12));
   --filter-width:232px;
@@ -138,6 +140,8 @@
   --shadow-color:#00000040;
   --shadow-subtle-color:#00000029;
   --shadow-strong-color:#00000066;
+  --navbar-bg:rgba(24, 30, 42, 0.82);
+  --navbar-border:rgba(70, 83, 106, 0.45);
   --map-land:#252f3e;
   --map-road:#4b586d;
   --map-water:#284962;

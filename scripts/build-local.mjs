@@ -13,7 +13,7 @@ function collect(folder) {
   for (const entry of readdirSync(path.join(root, folder), { withFileTypes: true })) {
     const name = folder + '/' + entry.name;
     if (entry.isDirectory()) collect(name);
-    else if (name==='web/vendor/lucide/icon-nodes.json'||/\.(mjs|js|css|html|svg|webmanifest|sql|ttf|txt|md)$/.test(name)) files.push(name);
+    else if (name==='web/vendor/lucide/icon-nodes.json'||/\.(mjs|js|css|html|svg|webmanifest|sql|ttf|txt|md|png|webp)$/.test(name)) files.push(name);
   }
 }
 collect('local'); collect('web'); files.push('scripts/start-local.mjs');
