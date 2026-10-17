@@ -19,3 +19,20 @@ export const SHOP_PRICING_CONFIG = {
  tieStep: 1,
  endings: [{step: 100, offset: 99}, {step: 100, offset: 0}, {step: 100, offset: 50}]
 };
+
+// Catalog structure, selection and seed controls share the pricing configuration.
+export const CATALOG_CONFIG = {
+ axisOrder: ['storage','ram','connectivity','size','screen_size','chipset','gpu'],
+ lastAxes: ['color','colour'],
+ configurationKey: 'configuration',
+ configurationLabel: 'Configuration',
+ defaultVariant: 'cheapest_base_price',
+ selectorDropdownThreshold: 8,
+ similarProductLimit: 6,
+ priceSanity: SHOP_PRICING_CONFIG.clamp,
+ seed: 'nearby-college-stock-v1',
+ stockDistribution: {available:0.55,low_stock:0.20,out_of_stock:0.15,unavailable:0.10},
+ stockOrder: ['available','low_stock','out_of_stock','unavailable','unknown'],
+ signatureLength: 24,
+ slugSignatureLength: 8
+};

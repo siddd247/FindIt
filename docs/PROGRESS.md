@@ -316,3 +316,7 @@ Started npm start on port 3005 with empty stderr. Live HTTP checks passed for 56
 Limits: real browser/device/console verification remains blocked; ESLint executable is unavailable; 32 opening schedules, 19 phones, one pincode and real stock observations remain unsupplied. Automatic approval review rejected recursive cleanup of 178 historical test scratch folders because sandbox approval is disabled; no deletion occurred. Newly created test/build folders are cleaned successfully after awaited IPC shutdown. Existing hosted scaffold remains retained and unverified. No tracked files deleted.
 
 Final validation for this release pass: 56/56 automated tests pass, compiled local build and isolated HTTP smoke check pass, git diff --check passes. No runtime server stderr was recorded by the release startup/shutdown test. Browser and ESLint limits remain unchanged.
+
+## 2026-10-17: parent catalogue phase 1
+
+User approved restructure decisions and explicitly confirmed shop-user deletion count zero. Completed additive migration 004 and source-preserving grouping: 164 parent products / 918 variants / 41 single-variant parents / 431 archived source records kept separate. Created 29,376 seed-tagged approved offers, seed distribution and reversible approval tracking; all seven pending-queue counts zero. Every variant has an available shop; all shops have four stock statuses. No shop-user accounts deleted; both admin records preserved. All 59 tests and local build passed. See docs/CATALOGUE-RESTRUCTURE.md.
