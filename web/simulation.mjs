@@ -42,6 +42,6 @@ export function simulationContent(data,params){
 }
 export async function mountSimulation(){
  const target=document.querySelector('#simulation-content');
- try{const params=new URLSearchParams(location.search),response=await fetch('/api/simulation?'+params,{cache:'no-store'}),data=await response.json();if(!response.ok)throw Error(data.error||'Store catalogue unavailable.');target.innerHTML=simulationContent(data,params);if(assignmentLabels(data).approved){document.title='Admin-approved shop assignments - Nearby';const title=document.querySelector('.simulation-page>h1');if(title)title.textContent='Admin-approved shop assignments';}}
+ try{const params=new URLSearchParams(location.search),response=await fetch('/api/simulation?'+params,{cache:'no-store'}),data=await response.json();if(!response.ok)throw Error(data.error||'Store catalogue unavailable.');target.innerHTML=simulationContent(data,params);if(assignmentLabels(data).approved){document.title='Admin-approved shop assignments - Nearbuy';const title=document.querySelector('.simulation-page>h1');if(title)title.textContent='Admin-approved shop assignments';}}
  catch(error){target.innerHTML='<p class="notice">Shop assignments could not load. '+h(error.message)+'</p><a class="button" href="/catalogues">Try again</a>';}
 }

@@ -3,7 +3,7 @@
 .topbar{background:var(--surface);box-shadow:none;border-bottom:1px solid var(--border)}
 .nav{height:var(--site-header-height);gap:var(--space-6)}
 .brand{color:var(--text);font-size:1.375rem;font-weight:var(--font-weight-bold);letter-spacing:-.045em}
-.brandmark{width:36px;height:36px;border:0;border-radius:var(--radius-sm);background:var(--accent);color:var(--accent-contrast)}
+.brandmark{width:36px;height:36px;border:0;border-radius:var(--radius-sm);background:transparent;object-fit:contain}
 .brand small{font-size:.625rem;letter-spacing:.1em;color:var(--text-muted)}
 .nav>nav{gap:var(--space-6)}
 .nav>nav a{min-height:44px;padding:var(--space-6) 0;color:var(--text-muted);font-size:var(--text-sm)}

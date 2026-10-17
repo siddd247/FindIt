@@ -132,17 +132,17 @@ Validation for both phases: the full automated suite and local build pass; added
 
 ### Final browser checklist
 
-Use **http://127.0.0.1:3012**. Check the following at **360px, 768px and 1440px** in Light and Dark, cycling Indigo, Emerald and Amber:
+Use **http://127.0.0.1:3013**. Check the following at **360px, 768px and 1440px** in Light and Dark, cycling Indigo, Emerald and Amber:
 
 | Page | URL | Main check |
 | --- | --- | --- |
-| Buyer Home | http://127.0.0.1:3012/ | Search, cards, header theme picker and phone width |
-| Product comparison | http://127.0.0.1:3012/products/apple-iphone-15-5fd79a72 | Variant selection, price changes, sticky comparison desktop and normal page scroll on phone |
-| Shop sign-in | http://127.0.0.1:3012/owner | Fields, validation, theme control and narrow layout |
-| Shop dashboard | http://127.0.0.1:3012/owner | After signing in with an assigned shop account: shop identity, product groups, variant fields, stock select, history and CSV controls |
-| Shop registration | http://127.0.0.1:3012/join | Form spacing and mobile input widths |
-| Admin sign-in | http://127.0.0.1:3012/control | Private login layout and theme control |
-| Admin workspace | http://127.0.0.1:3012/control | After signing in: sidebar selection, dashboard stats, shops table, catalogue form, data quality and long-page header behavior |
+| Buyer Home | http://127.0.0.1:3013/ | Search, cards, header theme picker and phone width |
+| Product comparison | http://127.0.0.1:3013/products/apple-iphone-15-5fd79a72 | Variant selection, price changes, sticky comparison desktop and normal page scroll on phone |
+| Shop sign-in | http://127.0.0.1:3013/owner | Fields, validation, theme control and narrow layout |
+| Shop dashboard | http://127.0.0.1:3013/owner | After signing in with an assigned shop account: shop identity, product groups, variant fields, stock select, history and CSV controls |
+| Shop registration | http://127.0.0.1:3013/join | Form spacing and mobile input widths |
+| Admin sign-in | http://127.0.0.1:3013/control | Private login layout and theme control |
+| Admin workspace | http://127.0.0.1:3013/control | After signing in: sidebar selection, dashboard stats, shops table, catalogue form, data quality and long-page header behavior |
 
 The live database has no shop-user account, per the earlier account-removal decision. Manual signed-in shop-dashboard checks require an administrator-created account linked to a shop. Admin views beyond the sign-in screen require the existing administrator credentials. No accounts or credentials were created for this review. The automated isolated ownership and admin tests remain the verification for those signed-in actions.
 
@@ -153,3 +153,7 @@ Remaining limitation: no screenshot or real-browser visual review was available 
 Exact Phase 4–5 changed/created files: web/workspace.css, web/admin.css, web/shop-model-ui.mjs, web/index.html, web/sw.js, web/app.js, local/server.mjs, scripts/build-local.mjs, tests/theme.test.mjs, tests/components.test.mjs, tests/preview-routing.test.mjs and docs/UI-REDESIGN.md. No database files, accounts or catalogue data changed.
 
 Final redesign checkpoint: phases 4 and 5 are complete; the repository commit records this verified state.
+
+## Brand update
+
+The supplied `Downloads/logo.svg` is copied to `web/icon.svg` and is used as the shared mark in the public header/footer and admin navigation/sign-in, as well as the favicon and installed-app icon. The visible brand and page-title suffix are now **Nearbuy**; the web manifest and Open Graph site name use the same name. Internal storage keys, authentication cookies and code identifiers retain their existing names because they are not user-facing branding.

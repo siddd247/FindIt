@@ -1,1 +1,1 @@
-{"name":"Nearby Stock Finder","short_name":"Nearby","start_url":"/","display":"standalone","background_color":"{{BACKGROUND}}","theme_color":"{{ACCENT}}","icons":[{"src":"/icon.svg","sizes":"any","type":"image/svg+xml","purpose":"any"}]}
+{"name":"Nearbuy","short_name":"Nearbuy","start_url":"/","display":"standalone","background_color":"{{BACKGROUND}}","theme_color":"{{ACCENT}}","icons":[{"src":"/icon.svg?v=20261017-nearbuy-1","sizes":"any","type":"image/svg+xml","purpose":"any"}]}
