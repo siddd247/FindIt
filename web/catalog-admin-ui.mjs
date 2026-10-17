@@ -1,9 +1,10 @@
+import {UI} from './public-content.mjs?v=20261017-components-2';
 const h=s=>String(s??'').replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
 const parse=v=>typeof v==='string'?JSON.parse(v):v;
 const options=(rows,current,label)=>rows.map(row=>'<option value="'+h(row.id)+'" '+(row.id===current?'selected':'')+'>'+h(label(row))+'</option>').join('');
-const field=(label,name,value='',type='text',extra='')=>'<label>'+label+'<input name="'+name+'" type="'+type+'" value="'+h(value)+'" '+extra+'></label>';
+const field=(label,name,value='',type='text',extra='')=>UI.input(label,name,{value,type,attributes:extra});
 const specsText=v=>Object.entries(parse(v||'{}')).map(([k,value])=>k+': '+value).join('\n');
-const notes=(label,name,value)=>'<label>'+label+'<textarea name="'+name+'" rows="4">'+h(value)+'</textarea></label>';
+const notes=(label,name,value)=>UI.textarea(label,name,{value});
 const names=p=>p.brand+' '+p.model_name;
 export const catalogTabs=['model-catalogue','shop-users','catalogue-requests','catalogue-quality'];
 export function catalogAdminView(state){

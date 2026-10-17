@@ -13,7 +13,7 @@ function collect(folder) {
   for (const entry of readdirSync(path.join(root, folder), { withFileTypes: true })) {
     const name = folder + '/' + entry.name;
     if (entry.isDirectory()) collect(name);
-    else if (/\.(mjs|js|css|html|svg|webmanifest|sql|ttf|txt|md)$/.test(name)) files.push(name);
+    else if (name==='web/vendor/lucide/icon-nodes.json'||/\.(mjs|js|css|html|svg|webmanifest|sql|ttf|txt|md)$/.test(name)) files.push(name);
   }
 }
 collect('local'); collect('web'); files.push('scripts/start-local.mjs');
@@ -47,7 +47,7 @@ try {
     proc.stderr.on('data', c => { log += c; });
     proc.once('exit', code => { clearTimeout(timeout); reject(new Error('Built server exited ' + code + ': ' + log)); });
   });
-  for (const route of ['/', '/tokens.css', '/fonts/Inter-Regular.ttf', '/fonts/Inter-SemiBold.ttf', '/fonts/Inter-Bold.ttf', '/manifest.webmanifest', '/icon.svg', '/catalogues', '/simulation.mjs', '/shop-pricing.mjs', '/shop-pricing-config.mjs', '/api/simulation', '/theme.js', '/app.js', '/admin.mjs', '/public-content.mjs', '/icons.mjs', '/maps.mjs', '/styles.css', '/api/session', '/api/catalogue', '/api/search?q=iphn%2015']) {
+  for (const route of ['/', '/components.css', '/tokens.css', '/fonts/Inter-Regular.ttf', '/fonts/Inter-SemiBold.ttf', '/fonts/Inter-Bold.ttf', '/manifest.webmanifest', '/icon.svg', '/catalogues', '/simulation.mjs', '/shop-pricing.mjs', '/shop-pricing-config.mjs', '/api/simulation', '/theme.js', '/app.js', '/admin.mjs', '/public-content.mjs', '/icons.mjs', '/maps.mjs', '/styles.css', '/api/session', '/api/catalogue', '/api/search?q=iphn%2015']) {
     const response = await fetch('http://127.0.0.1:'+port + route);
     if (route.endsWith('.mjs') && !response.headers.get('content-type')?.includes('javascript')) throw new Error('Module is not served as JavaScript: '+route);
     if (!response.ok) throw new Error('Built route failed: ' + route + ' ' + response.status);

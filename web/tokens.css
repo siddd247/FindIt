@@ -20,6 +20,7 @@
   --warning-surface:#fff4d9;
   --warning-border:#aa7c30;
   --danger:#a52a38;
+  --danger-contrast:#ffffff;
   --danger-surface:#ffedf0;
   --danger-border:#bd6671;
   --unavailable:#4c5c72;
@@ -67,6 +68,9 @@
   --shadow-sm:0 2px 8px var(--shadow-subtle-color);
   --shadow:0 12px 32px var(--shadow-color);
   --shadow-raised:0 16px 48px var(--shadow-strong-color);
+  --control-height:48px;
+  --focus-width:3px;
+  --icon-stroke:2;
   --motion-fast:140ms;
   --motion-normal:180ms;
   --accent:var(--accent-light);
@@ -116,6 +120,7 @@
   --warning-surface:#3a2b15;
   --warning-border:#b28d48;
   --danger:#ffadb6;
+  --danger-contrast:#421e2a;
   --danger-surface:#421e2a;
   --danger-border:#bf7280;
   --unavailable:#c2ccdc;
