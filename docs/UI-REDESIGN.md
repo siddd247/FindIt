@@ -77,4 +77,45 @@ Known pending differences: buyer page composition/card density and sticky compar
 
 Exact Phase 2 changed/created files: web/components.css, web/styles.css, web/tokens.css, web/public-content.mjs, web/icons.mjs, web/app.js, web/admin.mjs, web/catalog-ui.mjs, web/catalog-admin-ui.mjs, web/shop-model-ui.mjs, web/index.html, web/sw.js, web/vendor/lucide/LICENSE.txt, web/vendor/lucide/SOURCE.md, web/vendor/lucide/icon-nodes.json, local/server.mjs, scripts/build-local.mjs, tests/components.test.mjs, tests/ui.test.mjs, tests/theme.test.mjs, tests/preview-routing.test.mjs, docs/UI-REDESIGN.md and docs/PROGRESS.md. No tracked files deleted.
 
-Status: Phase 2 complete; waiting for user browser feedback before Phase 3.
+Phase 2 checkpoint: 0b242be. The user authorized Phase 3 with "cont".
+
+## Phase 3: buyer discovery, product comparison and retailer pages
+
+Review URL: http://127.0.0.1:3009 . Earlier local previews forward here when their backend lacks the buyer-design capability. User authorized this phase with "cont". No new dependency, invented image/shop URL, account creation or database migration was needed.
+
+Home now prioritizes search, real catalogue/directory counts and category browsing. Removed the decorative map illustration, moved actual featured model cards into the main flow and derives suggested searches from the catalogue instead of specific hardcoded model names. Discovery uses larger art areas (actual images or honest category-icon fallbacks), model-level names, starting prices, shop counts and option counts. Directory filters/reset, sourced retailer identity, Maps/contact information and internal shop/category/product navigation remain available.
+
+Product pages have larger image areas, configuration chips/swatches, a specification table and a desktop sticky comparison column. Its shop list scrolls within the panel on desktop; at widths up to 1024px the panel returns to normal document flow with no nested shop-list scrolling. A compact price is also visible near the product heading on narrower screens. The selected configuration updates range/exact price, images, specs, stock rows and URL without reloading or another read request. Offers are flat compact rows rather than repeated shadow cards. Available/low-stock offers sort first; out-of-stock/unavailable remain visibly distinct and excluded from Best price. Indicative/seed and shop-entered provenance stays visible. Internal Go to shop and disabled external website controls remain.
+
+Search has a dedicated query bar, desktop filter column and native collapsible phone filters. Brand/category/min/max/spec fields retain their names and API semantics. Added per-filter removal; Reset retains its previous clear-all behavior. Request sequencing prevents earlier, slower responses from overwriting newer filter selections. Archived pages retain suggestions and category links; server 410/noindex behavior is unchanged.
+
+Added web/buyer.css and removed 224 old buyer/illustration/footer style rules (14,026 bytes) from web/styles.css; shared primitives remain in web/components.css and all colors remain in web/tokens.css. Updated typography/layout tokens, responsive header/footer and theme-safe spacing. Administrator JavaScript now loads only for /control rather than every public page. Shop dashboard/admin compositions are intentionally deferred to Phases 4/5.
+
+Validation: 77 tests pass; compiled local build and isolated built-server smoke checks pass. New regressions cover partial price ranges, dependent selections and image updates, single variants, scoped offers, internal links, mobile filter markup, stale-response handling, individual removal/reset, sourced shop details/unknown values, archives and model-card data. Existing auth/role, owner, admin catalogue, imports, CSV/history, deterministic pricing and six theme combinations pass.
+
+Live HTTP checks covered 21 routes. Actual catalogue UI handlers rendered all 164 parents and resolved 933 option combinations, always showing 32 offer rows and one eligible Best price, with only 164 initial read calls (selection caused none). Nine actual application modules rendered against live APIs, including Home with 11 category links/12 distinct model cards, search/empty state, model, directory/shop, owner/admin login and informational content. Server stderr remains empty; SQLite integrity ok and all 29,376 offers unchanged. These are programmatic module/HTTP checks, not a real browser or screenshot assessment.
+
+### Phase 3 browser checklist
+
+Check each URL at **360px, 768px, 1366px and 1440px**, with Light/Dark and each Indigo/Emerald/Amber accent:
+
+| Page | URL | Main check |
+| --- | --- | --- |
+| Home | http://127.0.0.1:3009/ | Search-first layout, real counts, 11 categories, discovery cards, suggestions keyboard/Escape |
+| Search | http://127.0.0.1:3009/search?q=iphone+15 | Desktop filter column; collapsed phone filters; apply/remove/reset and ascending price |
+| Empty search | http://127.0.0.1:3009/search?q=iphone+15&min=999999999 | Empty state and Reset filters |
+| Phone model | http://127.0.0.1:3009/products/apple-iphone-15-5fd79a72 | Sticky desktop comparison and scrolling; chip/swatch selected/hover/focus states; live price/URL/specs |
+| Laptop model | http://127.0.0.1:3009/products/apple-macbook-pro-16-m4-pro-max-5d32991b | Configuration selector labels, long names, image area and comparison rows |
+| One variant | http://127.0.0.1:3009/products/dyson-purifier-hot-cool-gen1-hp10-4ed580c0 | No redundant selectors; price/shop list remains usable |
+| Directory | http://127.0.0.1:3009/shops | Area/name filters, reset, sourced details and Maps links |
+| Shop/category | http://127.0.0.1:3009/shops/shop-013?category=phones | Active category, sourced/unknown contact details, category product cards |
+| Shop-specific model | http://127.0.0.1:3009/products/apple-iphone-15-5fd79a72?shop=shop-013 | Only that shop’s price/status changes with configuration; shop context survives refresh |
+| Informational content | http://127.0.0.1:3009/availability | Body typography, footer and link contrast |
+
+Also inspect Home/header at **320px and 390px** and the product page at **1024px** (comparison should flow normally) versus **1366px** (comparison should stick). Use a viewport height around 900px, scroll through specs, then scroll the desktop shop comparison region with mouse and keyboard. At phone width the whole page should scroll normally. Check all four stock badges, one eligible Best price, disabled external website buttons, refresh/share URLs and System theme tracking.
+
+Known pending differences: signed-in shop dashboard composition (Phase 4) and admin composition (Phase 5). Real product photos are still absent from the provided dataset and have not been invented; category icons remain. Programmatic palette contrast checks pass, but actual rendered layout/contrast, overflow, phone focus and sticky scrolling are for the user browser review. No screenshots are claimed.
+
+Exact Phase 3 changed/created files: web/buyer.css, web/catalog-ui.mjs, web/public-content.mjs, web/app.js, web/styles.css, web/tokens.css, web/index.html, web/sw.js, local/server.mjs, scripts/build-local.mjs, tests/buyer-design.test.mjs, tests/preview-routing.test.mjs, tests/theme.test.mjs, docs/UI-REDESIGN.md and docs/PROGRESS.md. No tracked files deleted.
+
+Status: Phase 3 complete; waiting for user browser feedback before Phase 4.

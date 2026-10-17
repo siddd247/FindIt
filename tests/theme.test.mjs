@@ -46,7 +46,7 @@ test('all mode/accent palettes meet AA text and control contrast; colors have a 
   assert.ok(contrast(resolve('--accent'),resolve('--accent-surface'))>=4.5,mode+' accent selected');assert.ok(contrast(resolve('--control-border'),resolve('--surface'))>=3,mode+' control border');
   assert.notEqual(resolve('--danger-surface'),resolve('--unavailable-surface'));
  }
- for(const file of ['web/styles.css','web/components.css','web/theme.js','web/app.js','web/admin.mjs','web/catalog-ui.mjs','web/index.html','web/icon.svg','web/manifest.webmanifest'])assert.doesNotMatch(readFileSync(file,'utf8'),/#[\da-f]{3,8}\b|\b(?:rgb|hsl)a?\(/i,file);
+ for(const file of ['web/styles.css','web/components.css','web/buyer.css','web/theme.js','web/app.js','web/admin.mjs','web/catalog-ui.mjs','web/index.html','web/icon.svg','web/manifest.webmanifest'])assert.doesNotMatch(readFileSync(file,'utf8'),/#[\da-f]{3,8}\b|\b(?:rgb|hsl)a?\(/i,file);
  const assets=themeAssetColors(css);assert.equal(JSON.parse(renderThemeAsset(readFileSync('web/manifest.webmanifest','utf8'),assets)).theme_color,assets.ACCENT);
  assert.match(renderThemeAsset(readFileSync('web/icon.svg','utf8'),assets),new RegExp(assets.ACCENT));
 });

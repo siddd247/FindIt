@@ -61,6 +61,14 @@
   --space-12:48px;
   --space-16:64px;
   --content-width:1280px;
+  --site-header-height:76px;
+  --sticky-offset:calc(var(--site-header-height) + var(--space-6));
+  --comparison-max-height:calc(100dvh - var(--site-header-height) - var(--space-12));
+  --filter-width:232px;
+  --text-display:clamp(2.5rem,5vw,4rem);
+  --text-product:clamp(1.75rem,3.2vw,2.75rem);
+  --text-price:clamp(1.75rem,3vw,2.25rem);
+  --radius-round:50%;
   --radius-sm:6px;
   --radius-md:10px;
   --radius-lg:16px;
