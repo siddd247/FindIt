@@ -33,6 +33,11 @@ export const CATALOG_CONFIG = {
  seed: 'nearby-college-stock-v1',
  stockDistribution: {available:0.55,low_stock:0.20,out_of_stock:0.15,unavailable:0.10},
  stockOrder: ['available','low_stock','out_of_stock','unavailable','unknown'],
+ shopRequestLimit: 300,
+ maximumOfferPrice: 1000000000,
+ bulkOfferLimit: 1000,
+ offerHistoryLimit: 50,
+ requestSizeLimit: 10000,
  signatureLength: 24,
  slugSignatureLength: 8
 };

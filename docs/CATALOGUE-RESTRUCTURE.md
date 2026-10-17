@@ -29,3 +29,9 @@ Phase 1 validation: 59 tests and compiled build passed; no unmapped active varia
 Buyer model search/cards, dependent selectors, internal shop/category navigation and shop-specific variant pricing are implemented. Active legacy variants return 301 with variant preselected; parent ID URLs canonicalize to slugs. All 431 archived IDs return 410 with noindex, suggestions and category navigation. /control is the admin entry; prior private path redirects. Parent pages include canonical URLs and aggregate price structured data.
 
 Validation: 61 tests and compiled build pass. Live verification checked all 918 active redirects, 431 archive responses, 164 parents and 933 selector combinations, with no server stderr. Availability sorting excludes out-of-stock/unavailable offers from Best price. Real browser layout remains unverified.
+
+## Phase 3
+
+Shop dashboards group their own offers by parent model and expand to variant price/stock forms. Added ownership-scoped CSV import/export, atomic validation, price history/rank, optional real HTTPS product URLs and missing-catalogue requests. Shop edits promote offers out of seed ownership so later seed wipes preserve them. Active/suspended shop-user status is enforced by server sessions and sign-in.
+
+Validation: 62 tests and compiled build pass. Cross-shop reads/writes/history/CSV are denied, invalid CSV applies no rows, history records source and shop edits, suspended accounts are rejected, and seed wipe retains shop-entered offers. Live account count remains zero; no shop credentials were invented.
