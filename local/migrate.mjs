@@ -18,9 +18,12 @@ export function migrate(db) {
   if (!db.prepare('SELECT version FROM schema_migrations WHERE version=2').get()) { execute(db, readFileSync(fileURLToPath(new URL('./migrations/002_evidence.up.sql',import.meta.url)),'utf8') + "\nINSERT INTO schema_migrations VALUES (2,strftime('%Y-%m-%dT%H:%M:%fZ','now'));"); changed=true; }
   if (!db.prepare('SELECT version FROM schema_migrations WHERE version=3').get()) { execute(db, readFileSync(fileURLToPath(new URL('./migrations/003_release_indexes.up.sql',import.meta.url)),'utf8') + "\nINSERT INTO schema_migrations VALUES (3,strftime('%Y-%m-%dT%H:%M:%fZ','now'));"); changed=true; }
   if (!db.prepare('SELECT version FROM schema_migrations WHERE version=4').get()) { execute(db, readFileSync(fileURLToPath(new URL('./migrations/004_parent_catalog.up.sql',import.meta.url)),'utf8') + "\nINSERT INTO schema_migrations VALUES (4,strftime('%Y-%m-%dT%H:%M:%fZ','now'));"); changed=true; }
+  if (!db.prepare('SELECT version FROM schema_migrations WHERE version=5').get()) { execute(db, readFileSync(fileURLToPath(new URL('./migrations/005_catalog_admin.up.sql',import.meta.url)),'utf8') + "\nINSERT INTO schema_migrations VALUES (5,strftime('%Y-%m-%dT%H:%M:%fZ','now'));"); changed=true; }
   return changed;
 }
 export function rollback(db) {
+  if(db.prepare('SELECT version FROM schema_migrations WHERE version=4').get()&&db.prepare('SELECT id FROM catalog_products LIMIT 1').get())throw Error('Rollback refused: catalog records must be preserved.');
+  if(db.prepare('SELECT version FROM schema_migrations WHERE version=5').get())execute(db,'ALTER TABLE catalog_requests DROP COLUMN result_variant_id; ALTER TABLE catalog_requests DROP COLUMN result_product_id; ALTER TABLE catalog_products DROP COLUMN default_locked; ALTER TABLE catalog_products DROP COLUMN redirect_to; DELETE FROM schema_migrations WHERE version=5;');
   if (db.prepare('SELECT version FROM schema_migrations WHERE version=4').get()) {
     for(const table of ['catalog_products','catalog_variants','offers','catalog_requests','catalog_seed_runs'])if(db.prepare('SELECT count(*) AS n FROM '+table).get().n)throw Error('Rollback refused: catalog records must be preserved.');
     execute(db,'DROP TABLE offer_history; DROP TABLE catalog_seed_effects; DROP TABLE catalog_requests; DROP TABLE offers; DROP TABLE catalog_legacy_map; DROP TABLE catalog_variants; DROP TABLE catalog_products; DROP TABLE catalog_seed_runs; ALTER TABLE users DROP COLUMN status; DELETE FROM schema_migrations WHERE version=4;');

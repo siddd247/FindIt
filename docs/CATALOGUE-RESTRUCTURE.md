@@ -35,3 +35,17 @@ Validation: 61 tests and compiled build pass. Live verification checked all 918 
 Shop dashboards group their own offers by parent model and expand to variant price/stock forms. Added ownership-scoped CSV import/export, atomic validation, price history/rank, optional real HTTPS product URLs and missing-catalogue requests. Shop edits promote offers out of seed ownership so later seed wipes preserve them. Active/suspended shop-user status is enforced by server sessions and sign-in.
 
 Validation: 62 tests and compiled build pass. Cross-shop reads/writes/history/CSV are denied, invalid CSV applies no rows, history records source and shop edits, suspended accounts are rejected, and seed wipe retains shop-entered offers. Live account count remains zero; no shop credentials were invented.
+
+## Phase 4
+
+Completed administrator catalogue management: create/edit parent models and variants, supplied product/colour images, selector ordering, automatic cheapest or explicit default, merge/split/move variants, materialize approved requests, quality review and audit log. Added active shop-user creation, explicit shop assignment/reassignment and account suspension. Every API is protected by separate administrator authentication; future shop users remain ownership-scoped. No live credentials were invented.
+
+Migration 005 adds parent redirect targets and default locks plus reviewed-request result references. Backed up before application: backups/before-modifications-2026-10-17T12-04-49-015Z.sqlite, SQL export and manifest; integrity ok. Original source data and offers were preserved.
+
+Validation: 63 automated tests pass; compiled local build and isolated HTTP smoke check pass. Integration checks cover role isolation, suspension, catalogue edits, duplicate rejection/transaction rollback, split/merge/move mapping preservation, old-model redirects, request creation and unique UI form IDs. Real browser layout/device/console testing remains unavailable, and ESLint is not installed. No deployment was performed.
+
+Updated local preview: http://127.0.0.1:3006 ; private admin sign-in: http://127.0.0.1:3006/control . Earlier loopback previews forward to the grouped catalogue runtime. No public admin navigation link is added.
+
+Changed files for Phase 4: local/admin-api.mjs, local/catalog-admin.mjs, local/catalog-model.mjs, local/catalog-read.mjs, local/migrate.mjs, local/migrations/005_catalog_admin.up.sql, local/server.mjs, web/admin.mjs, web/catalog-admin-ui.mjs, web/catalog-ui.mjs, web/shop-pricing-config.mjs, web/styles.css, web/sw.js, tests/catalog-admin.test.mjs, README.md, docs/CATALOGUE-RESTRUCTURE.md and docs/PROGRESS.md. No tracked files were deleted.
+
+Final live checks: all 918 active IDs return the correct 301/variant selection; all 164 parents have valid defaults/offers, 933 possible selector combinations resolve, and all 32 shop pages expose 164 models across 11 categories. Earlier Phase 2 checked all 431 archived responses; a final spaced sample remains 410/noindex. Actual buyer module handlers render, switch variants, persist query selection and restrict shop-specific offers without exceptions. Server startup stderr is empty. Final integrity and all seven pending-queue counts remain zero. The zero-account approved deletion was a no-op; both administrator records remain.

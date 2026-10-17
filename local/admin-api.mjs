@@ -1,3 +1,4 @@
+import {catalogAdminApi} from './catalog-admin.mjs';
 import {randomUUID} from 'node:crypto';
 import {requireAdmin,auditAdmin} from './admin-auth.mjs';
 import {importShops} from './import-shops.mjs';import {importProducts} from './import-products.mjs';
@@ -14,6 +15,7 @@ function csv(rows){if(!rows.length)return '';const keys=Object.keys(rows[0]);con
 export function adminApi({db,req,res,url,body,json}){
  const route=url.pathname.slice(5);if(!route.startsWith('admin'))return false;
  const user=requireAdmin(db,req),now=new Date().toISOString(),p=url.searchParams,action=route.slice(6);
+ if(route.startsWith('admin/catalog/'))return catalogAdminApi({db,req,res,url,body,user,json});
  if(req.method==='GET'){
   if(action==='dashboard'||route==='admin'){const stats=metrics(db);json(res,{stats,actions:db.prepare('SELECT id,actor_id,kind,target_id,details,created_at,reverted_at FROM admin_actions ORDER BY created_at DESC LIMIT 100').all(),zeroSearches:db.prepare("SELECT query,count(*) AS count FROM search_logs WHERE zero_result=1 AND kind='search' GROUP BY query ORDER BY count DESC LIMIT 30").all(),stale:db.prepare("SELECT l.id,p.name AS product,s.name AS shop,l.last_confirmed_at FROM listings l JOIN products p ON p.id=l.product_id JOIN shops s ON s.id=l.shop_id WHERE l.deleted_at IS NULL AND l.sample=0 AND julianday('now')-julianday(l.last_confirmed_at)>7 ORDER BY l.last_confirmed_at LIMIT 100").all()});return true;}
   if(action==='shops'){

@@ -11,7 +11,7 @@ function orderAxes(keys){
  const rank=key=>config.lastAxes.includes(key)?config.axisOrder.length+keys.length+config.lastAxes.indexOf(key):config.axisOrder.includes(key)?config.axisOrder.indexOf(key):config.axisOrder.length;
  return [...keys].sort((a,b)=>rank(a)-rank(b)||a.localeCompare(b));
 }
-function axesFor(records){
+export function deriveAxes(records){
  const keys=orderAxes(unique(records.flatMap(r=>Object.keys(r.specs))));
  const varying=keys.filter(key=>unique(records.map(r=>r.specs[key]??null)).length>1),common={};
  for(const key of keys)if(!varying.includes(key))common[key]=records[0].specs[key];
@@ -44,7 +44,7 @@ export function planCatalog(db){
  }
  const parents=[];
  for(const [groupKey,records]of groups){
-  const first=records[0].row,{axes,common,varying}=axesFor(records),id=stableId('model',groupKey);
+  const first=records[0].row,{axes,common,varying}=deriveAxes(records),id=stableId('model',groupKey);
   const variants=records.map(record=>{
    const options={};for(const axis of axes)options[axis.key]=axis.keys.length>1?JSON.stringify(axis.keys.map(key=>record.specs[key]??null)):record.specs[axis.key]??null;
    const {row,metadata,specs}=record;

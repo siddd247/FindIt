@@ -31,7 +31,7 @@ export function listModels(db,params=new URLSearchParams()){
  return {models,facets,total:models.length};
 }
 export function getModel(db,idOrSlug,shopId=''){
- const p=decode(db.prepare("SELECT * FROM catalog_products WHERE (id=? OR slug=?) AND deleted_at IS NULL AND approval_status='approved'").get(idOrSlug,idOrSlug));
+ let raw=db.prepare('SELECT * FROM catalog_products WHERE id=? OR slug=?').get(idOrSlug,idOrSlug);const visited=new Set();while(raw?.redirect_to){if(visited.has(raw.id))throw Error('Circular product redirect.');visited.add(raw.id);raw=db.prepare('SELECT * FROM catalog_products WHERE id=?').get(raw.redirect_to);}const p=raw&&!raw.deleted_at&&raw.approval_status==='approved'?decode(raw):null;
  if(!p)return null;
  return {product:p,variants:db.prepare("SELECT * FROM catalog_variants WHERE product_id=? AND deleted_at IS NULL AND approval_status='approved' ORDER BY base_price,id").all(p.id).map(variant),offers:modelOffers(db,p.id,shopId),shop:shopId?db.prepare("SELECT id,name,area FROM shops WHERE id=? AND status='active' AND deleted_at IS NULL").get(shopId)||null:null};
 }
