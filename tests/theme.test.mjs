@@ -46,18 +46,20 @@ test('all mode/accent palettes meet AA text and control contrast; colors have a 
   assert.ok(contrast(resolve('--accent'),resolve('--accent-surface'))>=4.5,mode+' accent selected');assert.ok(contrast(resolve('--control-border'),resolve('--surface'))>=3,mode+' control border');
   assert.notEqual(resolve('--danger-surface'),resolve('--unavailable-surface'));
  }
- for(const file of ['web/styles.css','web/components.css','web/buyer.css','web/theme.js','web/app.js','web/admin.mjs','web/catalog-ui.mjs','web/index.html','web/icon.svg','web/manifest.webmanifest'])assert.doesNotMatch(readFileSync(file,'utf8'),/#[\da-f]{3,8}\b|\b(?:rgb|hsl)a?\(/i,file);
+ for(const file of ['web/styles.css','web/components.css','web/buyer.css','web/workspace.css','web/admin.css','web/theme.js','web/app.js','web/admin.mjs','web/catalog-ui.mjs','web/index.html','web/icon.svg','web/manifest.webmanifest'])assert.doesNotMatch(readFileSync(file,'utf8'),/#[\da-f]{3,8}\b|\b(?:rgb|hsl)a?\(/i,file);
  const assets=themeAssetColors(css);assert.equal(JSON.parse(renderThemeAsset(readFileSync('web/manifest.webmanifest','utf8'),assets)).theme_color,assets.ACCENT);
  assert.match(renderThemeAsset(readFileSync('web/icon.svg','utf8'),assets),new RegExp(assets.ACCENT));
 });
 test('self-hosted Inter, theme assets and public/admin pages are served by the local runtime',async t=>{
  const dir=makeTestDirectory(path.resolve('.local/theme-test-')),port=await freePort(),base='http://127.0.0.1:'+port,proc=spawn(process.execPath,['local/server.mjs'],{env:{...process.env,LOCAL_DATA_DIR:dir,PORT:String(port)},windowsHide:true,stdio:['ignore','pipe','pipe','ipc']});let errors='';proc.stderr.on('data',chunk=>{errors+=chunk;});t.after(async()=>{await stopServer(proc);assert.equal(errors,'');});
  await new Promise((resolve,reject)=>{const timeout=setTimeout(()=>reject(Error('Startup')),10000);proc.stdout.on('data',chunk=>{if(String(chunk).includes('running at')){clearTimeout(timeout);resolve();}});proc.once('error',reject);});
- for(const page of ['/','/search','/shops','/owner','/join','/control','/about']){const r=await fetch(base+page);assert.equal(r.status,200);const html=await r.text();assert.ok(html.indexOf('/theme.js')<html.indexOf('/tokens.css'));assert.ok(html.includes('/tokens.css'));assert.doesNotMatch(html,/\{\{BACKGROUND\}\}/);}
+ for(const page of ['/','/search','/shops','/owner','/join','/control','/about']){const r=await fetch(base+page);assert.equal(r.status,200);const html=await r.text();assert.ok(html.indexOf('/theme.js')<html.indexOf('/tokens.css'));assert.ok(html.includes('/tokens.css'));assert.ok(html.includes('/workspace.css?v=20261017-workspace-4'));assert.ok(html.includes('/admin.css?v=20261017-admin-5'));assert.doesNotMatch(html,/\{\{BACKGROUND\}\}/);}
+ for(const asset of ['/workspace.css','/admin.css']){const response=await fetch(base+asset);assert.equal(response.status,200);assert.match(response.headers.get('content-type'),/text\/css/);}
  for(const face of ['Regular','SemiBold','Bold']){const r=await fetch(base+'/fonts/Inter-'+face+'.ttf');assert.equal(r.status,200);assert.match(r.headers.get('content-type'),/font\/ttf/);const b=Buffer.from(await r.arrayBuffer()),original=readFileSync('web/fonts/Inter-'+face+'.ttf');assert.equal(b.readUInt32BE(0),0x10000);assert.equal(createHash('sha256').update(b).digest('hex'),createHash('sha256').update(original).digest('hex'));}
  assert.match(await(await fetch(base+'/tokens.css')).text(),/--theme-label:"Amber"/);
  assert.doesNotMatch(await(await fetch(base+'/icon.svg')).text(),/\{\{/);assert.equal((await(await fetch(base+'/manifest.webmanifest')).json()).theme_color,themeAssetColors(css).ACCENT);
  assert.equal((await(await fetch(base+'/api/runtime')).json()).features.themeTokens,true);
+ assert.equal((await(await fetch(base+'/api/runtime')).json()).features.adminDesign,true);
 });
 test('buyer offers render four distinct stock states and exclude inactive shops from Best price',async()=>{
  const saved=Object.fromEntries(['document','location'].map(k=>[k,Object.getOwnPropertyDescriptor(globalThis,k)]));

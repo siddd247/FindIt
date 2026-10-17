@@ -118,4 +118,38 @@ Known pending differences: signed-in shop dashboard composition (Phase 4) and ad
 
 Exact Phase 3 changed/created files: web/buyer.css, web/catalog-ui.mjs, web/public-content.mjs, web/app.js, web/styles.css, web/tokens.css, web/index.html, web/sw.js, local/server.mjs, scripts/build-local.mjs, tests/buyer-design.test.mjs, tests/preview-routing.test.mjs, tests/theme.test.mjs, docs/UI-REDESIGN.md and docs/PROGRESS.md. No tracked files deleted.
 
-Status: Phase 3 complete; waiting for user browser feedback before Phase 4.
+Status: Phases 1–3 were reviewed in order. The user then authorized continuing through all remaining phases, so Phases 4–5 are complete in the same implementation run.
+
+## Phase 4: shop dashboard
+
+Added a token-based dashboard layout for the grouped catalogue shop workspace. The shop selector, bulk CSV controls, expandable model groups, variant offer forms, price history and product requests now have clearer grouping and mobile behavior. Product groups keep their dense variant editing rows; the dashboard does not add catalog-edit permissions. Existing server ownership checks and actions remain unchanged. The legacy shop owner workspace also receives responsive layout styling through its existing classes.
+
+## Phase 5: admin workspace
+
+Added a consistent private operations layout using the same tokens and shared controls. The admin sidebar has clearer selected states and spacing, the overview header remains visible during long pages, status tables keep their own scroll area, and the navigation becomes touch-friendly on phone widths. Admin routes, forms, role checks and data actions remain unchanged. No database or account changes were made.
+
+Validation for both phases: the full automated suite and local build pass; added checks cover token-only colors, stylesheet order/serving, responsive shop/admin selectors and latest-preview routing. HTTP checks cover both new CSS assets and the runtime design flags. These checks do not certify rendered browser geometry or screenshots.
+
+### Final browser checklist
+
+Use **http://127.0.0.1:3012**. Check the following at **360px, 768px and 1440px** in Light and Dark, cycling Indigo, Emerald and Amber:
+
+| Page | URL | Main check |
+| --- | --- | --- |
+| Buyer Home | http://127.0.0.1:3012/ | Search, cards, header theme picker and phone width |
+| Product comparison | http://127.0.0.1:3012/products/apple-iphone-15-5fd79a72 | Variant selection, price changes, sticky comparison desktop and normal page scroll on phone |
+| Shop sign-in | http://127.0.0.1:3012/owner | Fields, validation, theme control and narrow layout |
+| Shop dashboard | http://127.0.0.1:3012/owner | After signing in with an assigned shop account: shop identity, product groups, variant fields, stock select, history and CSV controls |
+| Shop registration | http://127.0.0.1:3012/join | Form spacing and mobile input widths |
+| Admin sign-in | http://127.0.0.1:3012/control | Private login layout and theme control |
+| Admin workspace | http://127.0.0.1:3012/control | After signing in: sidebar selection, dashboard stats, shops table, catalogue form, data quality and long-page header behavior |
+
+The live database has no shop-user account, per the earlier account-removal decision. Manual signed-in shop-dashboard checks require an administrator-created account linked to a shop. Admin views beyond the sign-in screen require the existing administrator credentials. No accounts or credentials were created for this review. The automated isolated ownership and admin tests remain the verification for those signed-in actions.
+
+Also inspect shop and admin views at **320px** for horizontal overflow, usable button targets, side navigation, and whether tables remain reachable by horizontal scrolling. Use Tab and keyboard focus in forms/tables; verify every theme and refresh persistence. The admin sidebar is sticky on phones, so confirm it does not cover too much of the viewport when expanded.
+
+Remaining limitation: no screenshot or real-browser visual review was available in this environment. The font, palettes, source assets and styles are local; rendered sticky behavior, overflow and contrast still need your browser check.
+
+Exact Phase 4–5 changed/created files: web/workspace.css, web/admin.css, web/shop-model-ui.mjs, web/index.html, web/sw.js, web/app.js, local/server.mjs, scripts/build-local.mjs, tests/theme.test.mjs, tests/components.test.mjs, tests/preview-routing.test.mjs and docs/UI-REDESIGN.md. No database files, accounts or catalogue data changed.
+
+Final redesign checkpoint: phases 4 and 5 are complete; the repository commit records this verified state.

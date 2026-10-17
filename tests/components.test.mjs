@@ -50,3 +50,11 @@ test('shop dashboard shared fields retain offer names and CSV/history actions',a
   await mountShopModels({api:async()=>data,nav:()=>'',footer:()=>''});const html=b.html();assert.match(html,/class="ui-field"/);assert.match(html,/name="price"[^>]+value="1234"/);assert.match(html,/name="stock_status"/);assert.match(html,/value="low_stock" selected/);assert.match(html,/name="shop_product_url"/);assert.match(html,/data-offer-history="o"/);assert.match(html,/\/api\/shop\/offers.csv\?shop=s/);
  }finally{b.restore();}
 });
+
+test('shop and admin compositions use responsive token-based layouts',()=>{
+ const shop=readFileSync('web/workspace.css','utf8'),admin=readFileSync('web/admin.css','utf8'),page=readFileSync('web/index.html','utf8');
+ assert.match(shop,/\.shop-model-workspace/);assert.match(shop,/\.shop-model-group/);assert.match(shop,/\.shop-variant-form/);assert.match(shop,/max-width:760px/);assert.match(shop,/var\(--accent\)/);
+ assert.match(admin,/\.admin-sidebar/);assert.match(admin,/\.admin-main/);assert.match(admin,/\.admin-table-wrap/);assert.match(admin,/max-width:620px/);assert.match(admin,/var\(--surface\)/);
+ assert.ok(page.indexOf('components.css')<page.indexOf('workspace.css'));assert.ok(page.indexOf('workspace.css')<page.indexOf('admin.css'));
+ for(const file of ['web/workspace.css','web/admin.css'])assert.doesNotMatch(readFileSync(file,'utf8'),/#[\da-f]{3,8}\b|\b(?:rgb|hsl)a?\(/i,file);
+});
