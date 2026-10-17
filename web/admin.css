@@ -1,6 +1,6 @@
 /* Private operations workspace. Shared controls, type and palette are defined by the token system. */
-.admin-layout{min-height:100dvh;display:grid;grid-template-columns:248px minmax(0,1fr);background:var(--background)}
-.admin-sidebar{z-index:4;display:flex;flex-direction:column;gap:var(--space-2);padding:var(--space-6) var(--space-4);height:100dvh;position:sticky;top:0;overflow:auto;background:var(--surface);border-right:1px solid var(--border)}
+.admin-layout{min-height:100dvh;display:grid;grid-template-columns:248px minmax(0,1fr);background:transparent}
+.admin-sidebar{z-index:4;display:flex;flex-direction:column;gap:var(--space-2);padding:var(--space-6) var(--space-4);height:100dvh;position:sticky;top:0;overflow:auto;background:var(--page-surface-overlay);border-right:1px solid var(--border)}
 .admin-sidebar .brand{margin:0;padding:var(--space-2) var(--space-3) var(--space-6);font-size:var(--text-xl)}
 .admin-sidebar>.eyebrow{margin:0 var(--space-3) var(--space-2);font-size:var(--text-xs);color:var(--text-muted)}
 .admin-sidebar>button{justify-content:space-between;min-height:46px;padding-inline:var(--space-3);border-color:transparent;background:transparent;text-align:left;font-size:var(--text-sm);color:var(--text-muted)}
@@ -9,7 +9,7 @@
 .admin-sidebar>button[aria-pressed=true] .icon{color:var(--accent)}
 .admin-sidebar>p:last-child{margin:auto var(--space-2) 0;padding:var(--space-4) var(--space-2) 0;border-top:1px solid var(--border);line-height:1.6;overflow-wrap:anywhere}
 .admin-main{width:100%;max-width:1600px;min-width:0;margin-inline:auto;padding:var(--space-10) clamp(var(--space-5),4vw,var(--space-12)) var(--space-16)}
-.admin-main>.section-heading{position:sticky;top:0;z-index:3;align-items:center;padding-block:var(--space-4);margin:calc(var(--space-4) * -1) calc(clamp(var(--space-5),4vw,var(--space-12)) * -1) var(--space-6);padding-inline:clamp(var(--space-5),4vw,var(--space-12));background:var(--background);border-bottom:1px solid var(--border)}
+.admin-main>.section-heading{position:sticky;top:0;z-index:3;align-items:center;padding-block:var(--space-4);margin:calc(var(--space-4) * -1) calc(clamp(var(--space-5),4vw,var(--space-12)) * -1) var(--space-6);padding-inline:clamp(var(--space-5),4vw,var(--space-12));background:transparent;border-bottom:1px solid var(--border)}
 .admin-main>.section-heading h1{font-size:var(--text-2xl);margin:var(--space-1) 0 0}
 .admin-main>.section-heading .eyebrow{color:var(--text-muted)}
 .admin-main>.stats{gap:var(--space-3);margin-block:var(--space-5)}

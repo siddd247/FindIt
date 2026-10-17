@@ -57,6 +57,7 @@ legend{font-weight:var(--font-weight-semibold);padding:0 var(--space-2)}
 .badge.best-price{background:var(--accent);border-color:var(--accent);color:var(--accent-contrast)}
 
 .panel,.listing-card,.directory-card,.category-card,.filters{border:1px solid var(--border);border-radius:var(--radius-md);background:var(--surface);box-shadow:none}
+:root:not([data-theme=dark]) :is(.panel,.listing-card,.directory-card,.filters,.admin-table-wrap,.hero-search-panel){box-shadow:var(--shadow-sm)}
 .panel{padding:var(--space-6);margin-bottom:var(--space-5)}
 .panel[data-density=compact]{padding:var(--space-4)}
 .panel[data-density=raised]{background:var(--surface-raised);box-shadow:var(--shadow-sm)}

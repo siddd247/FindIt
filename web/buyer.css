@@ -1,10 +1,11 @@
 /* Buyer layouts. Shared controls remain in components.css; colors/primitives in tokens.css. */
 .shell{width:min(var(--content-width),calc(100% - var(--space-16)));margin-inline:auto}
-.topbar{background:var(--navbar-bg);backdrop-filter:blur(16px);-webkit-backdrop-filter:blur(16px);box-shadow:none;border-bottom:1px solid var(--navbar-border)}
+.topbar{background:var(--navbar-bg);backdrop-filter:blur(8px);-webkit-backdrop-filter:blur(8px);box-shadow:none;border-bottom:1px solid var(--navbar-border)}.topbar{background:linear-gradient(180deg,var(--navbar-bg) 0%,var(--content-shader) 100%);border-bottom-color:transparent}
 .nav{height:var(--site-header-height);gap:var(--space-6)}
-.brand{display:inline-flex;align-items:center;gap:var(--space-2);color:var(--text);font-size:1.375rem;font-weight:var(--font-weight-bold);letter-spacing:-.045em}
+.brand{display:inline-flex;align-items:center;gap:var(--space-2);color:var(--text);font-family:var(--font-heading);font-size:1.375rem;font-weight:800;letter-spacing:-.05em}
 .brandmark{width:28px;height:28px;border:0;border-radius:var(--radius-sm);background:transparent;object-fit:contain;flex-shrink:0}
-.topbar .brandmark{width:28px;height:28px}
+.topbar .brand{width:200px;height:50px;flex:0 0 200px;font-size:1.75rem}
+.topbar .brandmark{width:50px;height:50px}
 .brand small{font-size:.625rem;letter-spacing:.1em;color:var(--text-muted)}
 .nav>nav{gap:var(--space-6)}
 .nav>nav a{min-height:44px;padding:var(--space-6) 0;color:var(--text-muted);font-size:var(--text-sm)}
@@ -168,7 +169,7 @@
 .directory-card .maps-actions{padding-top:var(--space-3);margin-top:0;border-top:1px solid var(--border);width:100%}
 
 /* Utility-led home rather than a promotional hero. */
-.discovery-hero{background:var(--background);border-bottom:1px solid var(--border);overflow:visible}
+.discovery-hero{background:transparent;border-bottom:1px solid var(--border);overflow:visible}
 .discovery-intro{display:grid;grid-template-columns:minmax(0,1fr) minmax(0,1fr);align-items:start;gap:var(--space-12);padding-top:var(--space-16);padding-bottom:var(--space-12)}
 .discovery-intro h1{font-size:var(--text-display);max-width:13ch;line-height:1.05;letter-spacing:-.055em;margin:var(--space-4) 0 var(--space-5);font-weight:var(--font-weight-semibold)}
 .discovery-intro>div>p{max-width:49ch;font-size:var(--text-lg);line-height:1.7;color:var(--text-muted);margin:0}
@@ -225,7 +226,7 @@
 .directory-count{font-size:var(--text-sm);font-variant-numeric:tabular-nums;color:var(--text-muted);white-space:nowrap;padding-top:var(--space-3)}
 .directory-note{color:var(--text-muted);font-size:var(--text-xs);margin:var(--space-6) 0 0;max-width:72ch}
 .catalogue-card:not(:has(.discovery-card-body)){padding:var(--space-5);gap:var(--space-3)}
-footer{border-top:1px solid var(--border);background:var(--surface);padding:0;margin-top:var(--space-10)}
+footer{border-top:1px solid var(--border);background:var(--page-surface-overlay);padding:0;margin-top:var(--space-10)}
 .footer-grid{display:grid;grid-template-columns:1.5fr repeat(4,minmax(0,1fr));gap:var(--space-8);padding-block:var(--space-12)}
 .footer-grid>div{display:flex;flex-direction:column;align-items:flex-start;gap:var(--space-2);min-width:0}
 .footer-grid strong{font-size:var(--text-sm);font-weight:var(--font-weight-semibold);margin:0 0 var(--space-2)}
@@ -238,4 +239,6 @@ footer{border-top:1px solid var(--border);background:var(--surface);padding:0;ma
 @media(max-width:900px){.footer-grid{grid-template-columns:repeat(2,minmax(0,1fr));gap:var(--space-8)}.footer-grid>div:first-child{grid-column:1/-1}}
 @media(max-width:640px){.footer-grid{padding-block:var(--space-8);gap:var(--space-6)}.footer-bottom{flex-direction:column;align-items:flex-start;gap:var(--space-2)}.footer-bottom>span{max-width:48ch}}
 
-@media(max-width:640px){.topbar .brandmark{width:28px;height:28px}}
+@media(max-width:640px){.topbar .brand{width:clamp(160px,50vw,200px);height:44px;flex-basis:clamp(160px,50vw,200px);font-size:1.375rem}.topbar .brandmark{width:40px;height:40px}}
+
+@media(max-width:380px){.topbar .brand{width:136px;flex-basis:136px;gap:6px;font-size:1.125rem}.topbar .brandmark{width:36px;height:36px}.nav-actions select{width:48px}}
