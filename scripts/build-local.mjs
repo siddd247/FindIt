@@ -1,4 +1,5 @@
 import {temporaryDirectory,removeTemporaryDirectory,stopServer,freePort} from './runtime-checks.mjs';
+import { buildSmokeEnvironment } from './build-smoke-env.mjs';
 import { stripTypeScriptTypes } from 'node:module';
 import { readFileSync, writeFileSync, mkdirSync, readdirSync, existsSync } from 'node:fs';
 import path from 'node:path';
@@ -41,7 +42,7 @@ const data = temporaryDirectory(path.join(root, '.local', 'build-smoke-'));
 const port=await freePort();
 const deployHost='nearbuy-deploy-test.onrender.com';
 const hostedRequest=(route,method='GET',headers={},body)=>new Promise((resolve,reject)=>{const request=http.request({hostname:'127.0.0.1',port,path:route,method,headers},response=>{const chunks=[];response.on('data',chunk=>chunks.push(chunk));response.on('end',()=>resolve({status:response.statusCode,body:Buffer.concat(chunks).toString()}));});request.on('error',reject);if(body)request.write(body);request.end();});
-const proc = spawn(process.execPath, [path.join(out, 'local', 'server.mjs')], { cwd: out, env: { ...process.env, PORT: String(port), HOST: '0.0.0.0', RENDER_EXTERNAL_HOSTNAME: deployHost, NODE_ENV: 'production', LOCAL_DATA_DIR: data }, windowsHide: true, stdio: ['ignore', 'pipe', 'pipe', 'ipc'] });
+const proc = spawn(process.execPath, [path.join(out, 'local', 'server.mjs')], { cwd: out, env: buildSmokeEnvironment(process.env, { dataDir: data, port, deployHost }), windowsHide: true, stdio: ['ignore', 'pipe', 'pipe', 'ipc'] });
 try {
   await new Promise((resolve, reject) => {
     let log = '';

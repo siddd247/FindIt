@@ -1,5 +1,11 @@
 # Vercel migration
 
+## Preview build isolation fix
+
+The build smoke-test process uses `scripts/build-smoke-env.mjs` to remove Vercel/provider environment variables and cloud credentials, select local SQLite and mock image storage, and use a new temporary database directory. The parent environment is unchanged, so the actual Vercel Functions still use Turso and Cloudinary. Build validation does not need live services. Regression coverage runs the complete build with Vercel flags and deliberately unusable cloud credentials.
+
+Keep the effective Preview framework preset **Other**, build command `npm run build`, and Node.js **24.x**. The existing `vercel.json` sets `framework: null`, packages the Function source/assets, and routes requests to `api/index.mjs` and `api/[...path].mjs`. Do not use `.next` or `dist/local` as a Vercel static Output Directory; clear any stale dashboard override. If settings already match, no Vercel setting or environment-variable change is needed for this fix. Cloud credentials remain required at Function runtime. This fix does not deploy or migrate data.
+
 ## Phase plan
 
 This migration is being developed on `vercel-functions-persistent-storage`. The current SQLite database and the pre-migration backups are read-only inputs; production credentials and production data are never used by the migration tests.
