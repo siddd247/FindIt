@@ -10,10 +10,10 @@ function fixture(filename=':memory:'){
  for(let i=0;i<4;i++)db.prepare('INSERT INTO shops(id,name,area,city,status) VALUES (?,?,?,?,?)').run('s'+i,'Retailer '+i,'Jammu','Jammu','active');
  migrateCatalog(db,{apply:true});seedCatalog(db,{apply:true});return db;
 }
-test('model search matches child values once and every option combination resolves to a real variant',()=>{
+test('model search matches child values once and every option combination resolves to a real variant',async()=>{
  const db=fixture();try{
-  assert.equal(listModels(db,new URLSearchParams({q:'Large'})).total,1);assert.equal(listModels(db).models[0].variants_count,3);
-  const data=getModel(db,listModels(db).models[0].id),{product,variants}=data;
+  assert.equal((await listModels(db,new URLSearchParams({q:'Large'}))).total,1);assert.equal((await listModels(db)).models[0].variants_count,3);
+  const data=await getModel(db,(await listModels(db)).models[0].id),{product,variants}=data;
   for(const size of ['Small','Large'])for(const color of ['Black','White']){const chosen=selectVariant(product,variants,{size,color},'size');assert.ok(variants.some(v=>v.id===chosen.id));}
   const initial=initialSelection(product,variants,new URLSearchParams());assert.equal(initial.chosen.id,'v1');
   assert.equal(initialSelection(product,variants,new URLSearchParams({variant:'v2'})).chosen.id,'v2');
@@ -21,7 +21,7 @@ test('model search matches child values once and every option combination resolv
  }finally{db.close();}
 });
 test('HTTP active legacy IDs redirect with selection, archived IDs are 410/noindex, admin entry is /control',async t=>{
- const dir=makeTestDirectory(path.resolve('.local/buyer-test-')),db=fixture(path.join(dir,'stock.sqlite'));const parent=listModels(db).models[0];db.close();
+ const dir=makeTestDirectory(path.resolve('.local/buyer-test-')),db=fixture(path.join(dir,'stock.sqlite'));const parent=(await listModels(db)).models[0];db.close();
  writeFileSync(path.join(dir,'security.json'),JSON.stringify({adminPath:'/control-previous',setupToken:'fixture-token',createdAt:new Date().toISOString()}));
  const port=await freePort(),base='http://127.0.0.1:'+port,proc=spawn(process.execPath,['local/server.mjs'],{env:{...process.env,LOCAL_DATA_DIR:dir,PORT:String(port)},windowsHide:true,stdio:['ignore','pipe','pipe','ipc']});t.after(()=>stopServer(proc));
  await new Promise((resolve,reject)=>{const timer=setTimeout(()=>reject(Error('Startup timed out')),10000);proc.stdout.on('data',chunk=>{if(String(chunk).includes('running at')){clearTimeout(timer);resolve();}});proc.once('error',reject);});

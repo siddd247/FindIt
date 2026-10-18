@@ -18,9 +18,9 @@ function fixture(){
  return db;
 }
 
-test('simulation assigns recent launches to most shops, older items sparsely, and each pair only once',()=>{
+test('simulation assigns recent launches to most shops, older items sparsely, and each pair only once',async()=>{
  const db=fixture();try{
-  const {products,shops}=simulationInputs(db);assert.equal(shops.length,10);
+  const {products,shops}=await simulationInputs(db);assert.equal(shops.length,10);
   const first=generateSimulatedStock(products,shops,{year:2026,seed:'fixture-seed'}),again=generateSimulatedStock([...products].reverse(),[...shops].reverse(),{year:2026,seed:'fixture-seed'});
   assert.deepEqual(first.assignments,again.assignments);assert.equal(first.summary.recent_products,3);assert.equal(first.summary.older_products,4);
   for(const p of products){const count=first.assignments.filter(a=>a.product_id===p.id).length;const recent=p.launch_year>=2024&&p.launch_year<=2026;assert.ok(recent?count>=8&&count<=9:count>=1&&count<=3);}
@@ -29,46 +29,46 @@ test('simulation assigns recent launches to most shops, older items sparsely, an
  }finally{db.close();}
 });
 
-test('simulation filtering and pagination never write real inventory and hide stale/removed shops',()=>{
+test('simulation filtering and pagination never write real inventory and hide stale/removed shops',async()=>{
  const db=fixture(),dir=mkdtempSync(path.resolve('.local/simulation-test-'));try{
-  assert.equal(querySimulatedStock(db,dir,new URLSearchParams()).available,false);
-  const before=db.prepare('SELECT * FROM shops ORDER BY id').all(),{products,shops}=simulationInputs(db),data=generateSimulatedStock(products,shops,{year:2026,seed:'fixture'});
+  assert.equal((await querySimulatedStock(db,dir,new URLSearchParams())).available,false);
+  const before=db.prepare('SELECT * FROM shops ORDER BY id').all(),{products,shops}=await simulationInputs(db),data=generateSimulatedStock(products,shops,{year:2026,seed:'fixture'});
   writeFileSync(path.join(dir,'simulated-stock.json'),JSON.stringify(data));
-  const page=querySimulatedStock(db,dir,new URLSearchParams());assert.equal(page.available,true);assert.equal(page.simulated,true);assert.ok(page.rows.length<=40);assert.ok(page.rows.every(r=>r.confirmation===null&&r.status==='simulated_available'));
-  const shop=querySimulatedStock(db,dir,new URLSearchParams({shop:'shop-1',q:'Phone 0'}));assert.ok(shop.rows.length);assert.ok(shop.rows.every(r=>r.shop.id==='shop-1'&&r.product.id==='p-0'));
-  const none=querySimulatedStock(db,dir,new URLSearchParams({q:'NoSuchModel999'}));assert.equal(none.total,0);assert.equal(none.page,1);
-  assert.equal(db.prepare('SELECT count(*) AS n FROM listings').get().n,0);assert.deepEqual(discover(db,new URLSearchParams()).listings,[]);assert.deepEqual(db.prepare('SELECT * FROM shops ORDER BY id').all(),before);
-  db.prepare("UPDATE shops SET status='on_hold' WHERE id='shop-1'").run();assert.equal(querySimulatedStock(db,dir,new URLSearchParams()).available,false);
+  const page=await querySimulatedStock(db,dir,new URLSearchParams());assert.equal(page.available,true);assert.equal(page.simulated,true);assert.ok(page.rows.length<=40);assert.ok(page.rows.every(r=>r.confirmation===null&&r.status==='simulated_available'));
+  const shop=await querySimulatedStock(db,dir,new URLSearchParams({shop:'shop-1',q:'Phone 0'}));assert.ok(shop.rows.length);assert.ok(shop.rows.every(r=>r.shop.id==='shop-1'&&r.product.id==='p-0'));
+  const none=await querySimulatedStock(db,dir,new URLSearchParams({q:'NoSuchModel999'}));assert.equal(none.total,0);assert.equal(none.page,1);
+  assert.equal(db.prepare('SELECT count(*) AS n FROM listings').get().n,0);assert.deepEqual((await discover(db,new URLSearchParams())).listings,[]);assert.deepEqual(db.prepare('SELECT * FROM shops ORDER BY id').all(),before);
+  db.prepare("UPDATE shops SET status='on_hold' WHERE id='shop-1'").run();assert.equal((await querySimulatedStock(db,dir,new URLSearchParams())).available,false);
  }finally{db.close();}
 });
 
-test('simulation page labels generated availability, escapes content, and carries filters through pagination',()=>{
+test('simulation page labels generated availability, escapes content, and carries filters through pagination',async()=>{
  const db=fixture(),dir=mkdtempSync(path.resolve('.local/simulation-test-'));try{
-  db.prepare("UPDATE products SET name='<script>Phone</script>' WHERE id='p-0'").run();const {products,shops}=simulationInputs(db);const data=generateSimulatedStock(products,shops,{year:2026,seed:'fixture'});writeFileSync(path.join(dir,'simulated-stock.json'),JSON.stringify(data));
-  const result=querySimulatedStock(db,dir,new URLSearchParams());const html=simulationContent(result,new URLSearchParams({q:'<input>',shop:'shop-1'}));
+  db.prepare("UPDATE products SET name='<script>Phone</script>' WHERE id='p-0'").run();const {products,shops}=await simulationInputs(db);const data=generateSimulatedStock(products,shops,{year:2026,seed:'fixture'});writeFileSync(path.join(dir,'simulated-stock.json'),JSON.stringify(data));
+  const result=await querySimulatedStock(db,dir,new URLSearchParams());const html=simulationContent(result,new URLSearchParams({q:'<input>',shop:'shop-1'}));
   assert.match(html,/STORE CATALOGUE/);assert.match(html,/confirm stock/);assert.match(html,/confirm availability/);assert.match(html,/not a shop quote/);assert.match(html,/&lt;script&gt;/);assert.doesNotMatch(html,/<script>/);assert.match(html,/&lt;input&gt;/);assert.doesNotMatch(html,/data-confirm|data-report|tel:/);
  }finally{db.close();}
 });
 
-test('ordinary search preview groups shop matches, preserves the query, and distinguishes simulated inventory',()=>{
+test('ordinary search preview groups shop matches, preserves the query, and distinguishes simulated inventory',async()=>{
  const db=fixture(),dir=mkdtempSync(path.resolve('.local/simulation-test-'));try{
-  const {products,shops}=simulationInputs(db);const data=generateSimulatedStock(products,shops,{year:2026,seed:'search-preview'});writeFileSync(path.join(dir,'simulated-stock.json'),JSON.stringify(data));
-  const params=new URLSearchParams({q:'Fixture'}),result=querySimulatedStock(db,dir,params),html=simulationSearchMatches(result,params);
+  const {products,shops}=await simulationInputs(db);const data=generateSimulatedStock(products,shops,{year:2026,seed:'search-preview'});writeFileSync(path.join(dir,'simulated-stock.json'),JSON.stringify(data));
+  const params=new URLSearchParams({q:'Fixture'}),result=await querySimulatedStock(db,dir,params),html=simulationSearchMatches(result,params);
   assert.match(html,/Store catalogue matches/);assert.match(html,/not confirmed stock/);assert.match(html,/not a shop quote/);assert.match(html,/catalogues\?q=Fixture/);assert.match(html,/href="\/shops\/shop-\d+\?q=Fixture"/);assert.doesNotMatch(html,/data-confirm|data-report/);
   const displayed=[...html.matchAll(/<h3>.*?Fixture shop (\d+)/g)].map(m=>m[1]);assert.equal(displayed.length,new Set(displayed).size);assert.ok(displayed.length>0&&displayed.length<=8);
   assert.equal(simulationSearchMatches({available:false},params),'');assert.equal(simulationSearchMatches({available:true,rows:[]},params),'');
  }finally{db.close();}
 });
 
-test('admin approval covers every product/shop pair while retaining unconfirmed stock and estimate labels',()=>{
+test('admin approval covers every product/shop pair while retaining unconfirmed stock and estimate labels',async()=>{
  const db=fixture(),dir=mkdtempSync(path.resolve('.local/simulation-test-'));try{
-  const {products,shops}=simulationInputs(db),before=db.prepare('SELECT * FROM shops ORDER BY id').all();
+  const {products,shops}=await simulationInputs(db),before=db.prepare('SELECT * FROM shops ORDER BY id').all();
   const data=generateSimulatedStock(products,shops,{year:2026,seed:'approved-all',approveAll:true});
   assert.equal(data.assignments.length,products.length*shops.length);assert.ok(data.assignments.every(a=>a.catalogue_approved===true&&a.simulated===true));assert.equal(data.summary.approval.status,'admin_approved');assert.equal(data.summary.approval.stock_confirmed,false);
   for(const p of products)assert.equal(data.assignments.filter(a=>a.product_id===p.id).length,shops.length);
-  writeFileSync(path.join(dir,'simulated-stock.json'),JSON.stringify(data));const params=new URLSearchParams({q:'Phone 0'}),result=querySimulatedStock(db,dir,params);
+  writeFileSync(path.join(dir,'simulated-stock.json'),JSON.stringify(data));const params=new URLSearchParams({q:'Phone 0'}),result=await querySimulatedStock(db,dir,params);
   assert.equal(result.total,shops.length);assert.ok(result.rows.every(r=>r.status==='admin_approved_stock_unconfirmed'&&r.confirmation===null));
   for(const html of [simulationContent(result,params),simulationSearchMatches(result,params)]){assert.match(html,/Admin-approved/);assert.match(html,/stock unconfirmed/);assert.match(html,/not a shop quote/);assert.doesNotMatch(html,/Simulated available|data-confirm|data-report/);}
-  assert.deepEqual(db.prepare('SELECT * FROM shops ORDER BY id').all(),before);assert.equal(db.prepare('SELECT count(*) AS n FROM listings').get().n,0);assert.deepEqual(discover(db,new URLSearchParams()).listings,[]);
+  assert.deepEqual(db.prepare('SELECT * FROM shops ORDER BY id').all(),before);assert.equal(db.prepare('SELECT count(*) AS n FROM listings').get().n,0);assert.deepEqual((await discover(db,new URLSearchParams())).listings,[]);
  }finally{db.close();}
 });

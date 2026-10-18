@@ -76,6 +76,18 @@ export function catalogIntegrity(db){
  };
 }
 
+export async function catalogIntegrityAsync(db){
+ const statements=[
+  ['unmappedActiveVariants','SELECT p.id FROM products p LEFT JOIN catalog_legacy_map m ON m.legacy_id=p.id WHERE p.deleted_at IS NULL AND p.canonical_id IS NULL AND p.sample=0 AND m.legacy_id IS NULL'],
+  ['invalidDefaults','SELECT p.id FROM catalog_products p LEFT JOIN catalog_variants v ON v.id=p.default_variant_id AND v.product_id=p.id AND v.deleted_at IS NULL WHERE p.deleted_at IS NULL AND v.id IS NULL'],
+  ['emptyProducts','SELECT p.id FROM catalog_products p LEFT JOIN catalog_variants v ON v.product_id=p.id AND v.deleted_at IS NULL WHERE p.deleted_at IS NULL GROUP BY p.id HAVING count(v.id)=0'],
+  ['invalidMappings','SELECT m.legacy_id FROM catalog_legacy_map m JOIN catalog_variants v ON v.id=m.variant_id WHERE m.product_id!=v.product_id'],
+  ['orphanOffers','SELECT o.id FROM offers o LEFT JOIN catalog_variants v ON v.id=o.variant_id LEFT JOIN shops s ON s.id=o.shop_id WHERE v.id IS NULL OR s.id IS NULL'],
+  ['foreignKeyViolations','PRAGMA foreign_key_check'],
+ ];
+ return Object.fromEntries(await Promise.all(statements.map(async([key,sql])=>[key,await db.prepare(sql).all()])));
+}
+
 export function migrateCatalog(db,{apply=false}={}){
  const plan=planCatalog(db),report={...plan.report,dryRun:!apply,createdProducts:0,createdVariants:0,unchanged:0,skippedCustomized:0};
  if(!apply)return report;

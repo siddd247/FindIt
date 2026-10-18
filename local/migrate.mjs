@@ -1,5 +1,6 @@
 import { readFileSync } from 'node:fs';
 import { fileURLToPath } from 'node:url';
+import {withTransaction} from './db-utils.mjs';
 const migration = fileURLToPath(new URL('./migrations/001_sourced_shops.', import.meta.url));
 function execute(db, sql) {
   db.exec('PRAGMA foreign_keys=OFF; BEGIN IMMEDIATE;');
@@ -19,6 +20,33 @@ export function migrate(db) {
   if (!db.prepare('SELECT version FROM schema_migrations WHERE version=3').get()) { execute(db, readFileSync(fileURLToPath(new URL('./migrations/003_release_indexes.up.sql',import.meta.url)),'utf8') + "\nINSERT INTO schema_migrations VALUES (3,strftime('%Y-%m-%dT%H:%M:%fZ','now'));"); changed=true; }
   if (!db.prepare('SELECT version FROM schema_migrations WHERE version=4').get()) { execute(db, readFileSync(fileURLToPath(new URL('./migrations/004_parent_catalog.up.sql',import.meta.url)),'utf8') + "\nINSERT INTO schema_migrations VALUES (4,strftime('%Y-%m-%dT%H:%M:%fZ','now'));"); changed=true; }
   if (!db.prepare('SELECT version FROM schema_migrations WHERE version=5').get()) { execute(db, readFileSync(fileURLToPath(new URL('./migrations/005_catalog_admin.up.sql',import.meta.url)),'utf8') + "\nINSERT INTO schema_migrations VALUES (5,strftime('%Y-%m-%dT%H:%M:%fZ','now'));"); changed=true; }
+  return changed;
+}
+
+/** Async counterpart used by Vercel/Turso. It runs each version atomically and is idempotent. */
+export async function migrateAsync(db) {
+  await db.prepare('CREATE TABLE IF NOT EXISTS schema_migrations(version INTEGER PRIMARY KEY,applied_at TEXT NOT NULL)').run();
+  const migrations = [
+    [1, readFileSync(migration + 'up.sql', 'utf8')],
+    [2, readFileSync(fileURLToPath(new URL('./migrations/002_evidence.up.sql', import.meta.url)), 'utf8')],
+    [3, readFileSync(fileURLToPath(new URL('./migrations/003_release_indexes.up.sql', import.meta.url)), 'utf8')],
+    [4, readFileSync(fileURLToPath(new URL('./migrations/004_parent_catalog.up.sql', import.meta.url)), 'utf8')],
+    [5, readFileSync(fileURLToPath(new URL('./migrations/005_catalog_admin.up.sql', import.meta.url)), 'utf8')],
+  ];
+  let changed = false;
+  for (const [version, sql] of migrations) {
+    if (await db.prepare('SELECT version FROM schema_migrations WHERE version=?').get(version)) continue;
+    await withTransaction(db, async tx => {
+      // Recheck after obtaining the write transaction. Multiple serverless cold
+      // starts can run bootstrap concurrently; only one may apply each version.
+      if (await tx.prepare('SELECT version FROM schema_migrations WHERE version=?').get(version)) return;
+      await tx.exec(sql);
+      const violations = await tx.prepare('PRAGMA foreign_key_check').all();
+      if (violations.length) throw new Error(`Migration ${version} would break foreign keys.`);
+      await tx.prepare("INSERT INTO schema_migrations(version,applied_at) VALUES (?,strftime('%Y-%m-%dT%H:%M:%fZ','now'))").run(version);
+      changed = true;
+    });
+  }
   return changed;
 }
 export function rollback(db) {
