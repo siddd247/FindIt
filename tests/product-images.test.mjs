@@ -18,6 +18,7 @@ test('every stock image file exists and is synchronized to web/images', () => {
     'macbook.jpg',
     'rog-swift-monitor.jpg',
     'xm6.jpg',
+    'lg-c4-oled.jpg',
     'iphone-11.jpg',
     'iphone-12.jpg',
     'iphone-13.jpg',
@@ -71,6 +72,7 @@ test('product image matching rules correctly match target product families', () 
   check('xm6.jpg', 'Sony', 'WH-1000XM5');
   check('dyson.jpg', 'Dyson', 'V15 Detect Cordless Vacuum Cleaner');
   check('anker.jpg', 'Anker', 'Prime 200W Power Bank (20,000mAh)');
+  check('lg-c4-oled.jpg', 'LG', 'OLED evo C4 Series 4K TV (48-inch)');
 });
 
 test('isolated SQLite database updates product images without modifying other fields', () => {

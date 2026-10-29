@@ -22,7 +22,8 @@ export const productRules = [
   { file: '/images/products/rog-swift-monitor.jpg', match: p => /rog\s*swift/i.test(p.brand + ' ' + (p.model_name || p.model || p.name)) },
   { file: '/images/products/xm6.jpg', match: p => /(wh-1000xm|wf-1000xm|1000xm[456])/i.test(p.brand + ' ' + (p.model_name || p.model || p.name)) },
   { file: '/images/products/dyson.jpg', match: p => /dyson/i.test(p.brand + ' ' + (p.model_name || p.model || p.name)) },
-  { file: '/images/products/anker.jpg', match: p => /anker/i.test(p.brand + ' ' + (p.model_name || p.model || p.name)) }
+  { file: '/images/products/anker.jpg', match: p => /anker/i.test(p.brand + ' ' + (p.model_name || p.model || p.name)) },
+  { file: '/images/products/lg-c4-oled.jpg', match: p => /lg/i.test(p.brand) && /(oled|c4)/i.test(p.model_name || p.model || p.name) }
 ];
 
 export function syncStockImages(sourceDir = 'stock', webDir = 'web') {
@@ -42,6 +43,7 @@ export function syncStockImages(sourceDir = 'stock', webDir = 'web') {
     ['macbook.jpg', 'macbook.jpg'],
     ['rog swift monitor.jpg', 'rog-swift-monitor.jpg'],
     ['xm6.jpg', 'xm6.jpg'],
+    ['lg-c4-oled.jpg', 'lg-c4-oled.jpg'],
     ['iphone/iphone 18.jpg', 'iphone-18.jpg'],
     ['iphone/iphone x.jpg', 'iphone-x.jpg'],
     ['iphone/iphone11.jpg', 'iphone-11.jpg'],
@@ -75,8 +77,8 @@ export function syncStockImages(sourceDir = 'stock', webDir = 'web') {
     ['dyson.jpg', 'appliances.jpg'],
     ['imac.jpg', 'desktops.jpg'],
     ['apple-pencil.jpg', 'accessories.jpg'],
-    ['dyson.jpg', 'tv.jpg'],
-    ['dyson.jpg', 'tv-home.jpg']
+    ['lg-c4-oled.jpg', 'tv.jpg'],
+    ['lg-c4-oled.jpg', 'tv-home.jpg']
   ];
 
   for (const [prodFile, catFile] of catMap) {
