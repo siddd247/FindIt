@@ -53,7 +53,7 @@ export function catalogueCards(products,icon){if(products[0]?.kind==='model')ret
 export function modelCards(models,shop=''){
  return '<div class="catalogue-grid">'+models.map(p=>{
   const url='/products/'+p.slug+(shop?'?shop='+encodeURIComponent(shop):'');
-  const placeholderUrl='/images/placeholders/'+encodeURIComponent(String(p.category_id||p.category||'accessories').toLowerCase().replace(' & ','-').replace(/\s+/g,'-'))+'.webp';
+  const placeholderUrl='/images/placeholders/'+encodeURIComponent(String(p.category_id||p.category||'accessories').toLowerCase().replace(' & ','-').replace(/\s+/g,'-'))+'.jpg';
   const art='<a class="discovery-card-art image-wrapper" href="'+h(url)+'" tabindex="-1" aria-hidden="true"><div class="image-skeleton" aria-hidden="true"></div>'+(p.images?.[0]?'<img class="model-image product-image" src="'+h(p.images[0])+'" alt="" loading="lazy" onload="this.classList.add(\'loaded\')" onerror="this.onerror=null;this.src=\''+h(placeholderUrl)+'\'">':'<span class="product-image fallback-icon" data-placeholder="'+h(placeholderUrl)+'">'+Icon(p.category_id,64)+'</span>')+'<small>'+h(categoryLabel(p.category_id))+'</small></a>';
   return UI.card(art+'<div class="discovery-card-body"><small>'+h(p.brand)+'</small><h3><a href="'+h(url)+'">'+h(p.model_name||p.name)+'</a></h3><div class="discovery-card-meta"><span>'+Icon('store',14)+p.shop_count+' '+(p.shop_count===1?'shop':'shops')+'</span><span>'+p.variants_count+' '+(p.variants_count===1?'option':'options')+'</span></div><p class="model-from">From<strong>'+h(money(p.from_price))+'</strong></p>'+UI.button('Compare prices',{href:url,icon:Icon('arrow',17)})+'</div>',{className:'catalogue-card'});
  }).join('')+'</div>';
