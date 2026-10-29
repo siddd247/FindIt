@@ -1,4 +1,4 @@
-import {UI,discoveryCategories,publicFooter,supplementalPage,catalogueCards,verificationLabel,productFacts,browserStore,parseJSON,featuredProducts,brandLockup} from './public-content.mjs?v=20261017-nearbuy-1';
+import {UI,discoveryCategories,publicFooter,supplementalPage,catalogueCards,verificationLabel,productFacts,browserStore,parseJSON,featuredProducts,brandLockup} from './public-content.mjs?v=20261029-images-3';
 import {shopMapLinks} from './maps.mjs';
 const $=s=>document.querySelector(s), h=s=>String(s??'').replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
 import {Icon as icon} from './icons.mjs';
