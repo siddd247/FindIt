@@ -22,10 +22,10 @@ collect('local'); collect('web'); files.push('scripts/start-local.mjs');
 for (const file of ['lib/config.ts', 'lib/rules.ts', 'lib/seed.ts']) files.push(file);
 const manifest = [];
 for (const source of files) {
-  let content = readFileSync(path.join(root, source), source.endsWith('.ttf') ? undefined : 'utf8');
+  let content = readFileSync(path.join(root, source), /\.(ttf|png|jpg|jpeg|webp|ico)$/i.test(source) ? undefined : 'utf8');
   const target = source.replace(/\.ts$/, '.mjs');
   if (source.endsWith('.ts')) content = stripTypeScriptTypes(content, { mode: 'strip' });
-  if (/\.(mjs|ts|js)$/.test(source)) content = content.replace(/(['"])([^'"\n]+)\.ts\1/g, '$1$2.mjs$1');
+  if (typeof content === 'string' && /\.(mjs|ts|js)$/.test(source)) content = content.replace(/(['"])([^'"\n]+)\.ts\1/g, '$1$2.mjs$1');
   const destination = path.join(out, target);
   mkdirSync(path.dirname(destination), { recursive: true });
   writeFileSync(destination, content);

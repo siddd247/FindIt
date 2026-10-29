@@ -1,5 +1,5 @@
 import {createHash,randomBytes} from 'node:crypto';
-import {existsSync,readFileSync} from 'node:fs';
+import {existsSync,readFileSync,statSync} from 'node:fs';
 import path from 'node:path';
 import {matchProduct,distanceKm,isOpen} from '../lib/rules.ts';
 
@@ -30,11 +30,20 @@ export function generateSimulatedStock(products,shops,{seed=randomBytes(16).toSt
  return {version:1,simulated:true,notice:approveAll?approvedAssignmentNotice:simulationNotice,seed,generated_at:new Date().toISOString(),source_fingerprint:simulationFingerprint(products,shops),recent_years:[year-2,year-1,year],summary:{products:products.length,shops:shops.length,assignments:assignments.length,recent_products:recent.length,older_products:older.length,...(approval?{approval}:{}),recent_shops_per_product:{min:recent.length?Math.min(...recent.map(c=>c.shops)):0,max:recent.length?Math.max(...recent.map(c=>c.shops)):0},older_shops_per_product:{min:older.length?Math.min(...older.map(c=>c.shops)):0,max:older.length?Math.max(...older.map(c=>c.shops)):0}},assignments};
 }
 
+let cachedData=null,cachedMtime=0,cachedFile='';
+function loadSimulatedStockData(file){
+ const stat=statSync(file);
+ if(cachedData&&cachedFile===file&&cachedMtime===stat.mtimeMs)return cachedData;
+ const data=JSON.parse(readFileSync(file,'utf8'));
+ cachedData=data;cachedMtime=stat.mtimeMs;cachedFile=file;
+ return data;
+}
+
 export async function querySimulatedStock(db,dataDir,params){
  const file=path.join(dataDir,'simulated-stock.json');
  const empty={available:false,simulated:true,notice:simulationNotice,rows:[],total:0,page:1,pages:0,shops:[],categories:[]};
  if(!existsSync(file))return {...empty,message:'Store catalogues are not available yet.'};
- const data=JSON.parse(readFileSync(file,'utf8'));
+ const data=loadSimulatedStockData(file);
  if(data.version!==1||data.simulated!==true||!Array.isArray(data.assignments))throw Error('Invalid catalogue assignment file.');
  const {products,shops}=await simulationInputs(db);
  if(data.source_fingerprint!==simulationFingerprint(products,shops))return {...empty,message:'The catalogue or shop directory has changed. Refresh the store catalogue index.'};
