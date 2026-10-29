@@ -9,6 +9,7 @@
   --surface:#ffffff;
   --surface-raised:#ffffff;
   --surface-muted:#f0f2f7;
+  --image-surface:#ffffff;
   --border:#9ba7b7;
   --control-border:#758299;
   --text:#000000;
@@ -125,6 +126,7 @@
   --surface:rgba(24, 30, 42, 0.84);
   --surface-raised:rgba(34, 42, 57, 0.90);
   --surface-muted:rgba(32, 40, 55, 0.82);
+  --image-surface:#ffffff;
   --border:#46536a;
   --control-border:#718099;
   --text:#edf0f7;
