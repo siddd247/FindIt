@@ -1,5 +1,4 @@
-// The college presentation accepts authenticated owner registrations immediately.
-// Anonymous submissions still require review. Set OWNER_AUTO_APPROVAL=0 for moderation.
-process.env.OWNER_AUTO_APPROVAL ??= '1';
+// Account access is immediate; every new public shop listing requires administrator review.
+process.env.OWNER_AUTO_APPROVAL = '0';
 const { startLocalServer } = await import('../local/server.mjs');
 startLocalServer();

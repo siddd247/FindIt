@@ -1,12 +1,13 @@
+import {ownerShop} from './shop-management.mjs';
 import {randomUUID} from 'node:crypto';
 import {parseCSV,safeHttps} from './csv.mjs';
 import {stableId} from './catalog-model.mjs';
 import {CATALOG_CONFIG as config} from '../web/shop-pricing-config.mjs?v=20261017-final';
 import {withTransaction} from './db-utils.mjs';
 const fail=(message,status=400)=>{throw Object.assign(Error(message),{status});};
-async function shopOwned(db,user,id){const shop=await db.prepare("SELECT * FROM shops WHERE id=? AND owner_id=? AND status='active' AND deleted_at IS NULL").get(String(id),user.id);if(!shop)fail('You can only manage your assigned active shop.',403);return shop;}
+async function shopOwned(db,user,id){return ownerShop(db,user,id,{editable:true});}
 async function normalizedOffer(db,body,shop){
- const variant=await db.prepare('SELECT v.* FROM catalog_variants v JOIN catalog_products p ON p.id=v.product_id WHERE v.id=? AND v.deleted_at IS NULL AND p.deleted_at IS NULL').get(String(body.variant_id));if(!variant)fail('Choose an existing variant.');
+ const variant=await db.prepare("SELECT v.* FROM catalog_variants v JOIN catalog_products p ON p.id=v.product_id WHERE v.id=? AND v.deleted_at IS NULL AND p.deleted_at IS NULL AND v.approval_status='approved' AND p.approval_status='approved'").get(String(body.variant_id));if(!variant)fail('Choose an existing variant.');
  if(body.shop_id&&body.shop_id!==shop.id)fail('CSV rows must belong to your selected shop.',403);
  const price=Number(body.price);if(!Number.isFinite(price)||price<=0||price>config.maximumOfferPrice)fail('Enter a valid positive price.');
  if(!Object.hasOwn(config.stockDistribution,body.stock_status))fail('Choose a stock status.');
@@ -24,16 +25,21 @@ async function writeOffer(db,user,value){
 export async function shopOfferApi({db,req,res,url,body,user,json}){
  const action=url.pathname.slice('/api/shop/'.length);
  const owned=()=>shopOwned(db,user,body.shop_id||url.searchParams.get('shop'));
+ if(req.method==='GET'&&action==='status'){json(res,{shop:await ownerShop(db,user,url.searchParams.get('shop'))});return;}
  if(req.method==='GET'&&action==='catalog'){
-  const [shops,offerRows,categories,models]=await Promise.all([db.prepare("SELECT id,name,status FROM shops WHERE owner_id=? AND status='active' AND deleted_at IS NULL ORDER BY name").all(user.id),db.prepare("SELECT o.*,v.product_id,v.options,v.specs,p.slug,p.brand,p.model_name,p.category_id FROM offers o JOIN shops s ON s.id=o.shop_id JOIN catalog_variants v ON v.id=o.variant_id JOIN catalog_products p ON p.id=v.product_id WHERE s.owner_id=? AND s.status='active' AND s.deleted_at IS NULL AND v.deleted_at IS NULL AND p.deleted_at IS NULL ORDER BY p.brand,p.model_name,v.base_price").all(user.id),db.prepare('SELECT id,name FROM categories WHERE deleted_at IS NULL').all(),db.prepare('SELECT id,brand,model_name FROM catalog_products WHERE deleted_at IS NULL ORDER BY brand,model_name').all()]);
-  const offers=await Promise.all(offerRows.map(async o=>{
-   const prices=(await db.prepare("SELECT o.price FROM offers o JOIN shops s ON s.id=o.shop_id WHERE o.variant_id=? AND o.approval_status='approved' AND o.stock_status IN ('available','low_stock') AND s.status='active' AND s.deleted_at IS NULL ORDER BY o.price").all(o.variant_id)).map(r=>r.price);
-   return {...o,options:JSON.parse(o.options),specs:JSON.parse(o.specs),price_rank:!o.in_stock?'Not available':!prices.length?'Unranked':o.price<=prices[0]?'Cheapest':o.price>=prices.at(-1)?'Highest':'Mid',rank:1+prices.filter(p=>p<o.price).length,competing_shops:prices.length};
-  }));
+  const [shops,offerRows,categories,models]=await Promise.all([db.prepare("SELECT * FROM shops WHERE owner_id=? AND deleted_at IS NULL ORDER BY name").all(user.id),db.prepare("SELECT o.*,v.product_id,v.options,v.specs,p.slug,p.brand,p.model_name,p.category_id FROM offers o JOIN shops s ON s.id=o.shop_id JOIN catalog_variants v ON v.id=o.variant_id JOIN catalog_products p ON p.id=v.product_id WHERE s.owner_id=? AND s.deleted_at IS NULL AND v.deleted_at IS NULL AND p.deleted_at IS NULL ORDER BY p.brand,p.model_name,v.base_price").all(user.id),db.prepare('SELECT id,name FROM categories WHERE deleted_at IS NULL').all(),db.prepare("SELECT id,brand,model_name FROM catalog_products WHERE deleted_at IS NULL AND approval_status='approved' ORDER BY brand,model_name").all()]);
+  const shopStatuses=new Map(shops.map(s=>[s.id,s.status]));
+  const comparisonRows=await db.prepare("SELECT o.variant_id,o.price FROM offers o JOIN shops s ON s.id=o.shop_id WHERE o.approval_status='approved' AND o.stock_status IN ('available','low_stock') AND s.status='active' AND s.deleted_at IS NULL AND EXISTS(SELECT 1 FROM offers mine JOIN shops owned ON owned.id=mine.shop_id WHERE mine.variant_id=o.variant_id AND owned.owner_id=? AND owned.deleted_at IS NULL) ORDER BY o.variant_id,o.price").all(user.id),comparisonPrices=new Map();
+  for(const row of comparisonRows){if(!comparisonPrices.has(row.variant_id))comparisonPrices.set(row.variant_id,[]);comparisonPrices.get(row.variant_id).push(row.price);}
+  const offers=offerRows.map(o=>{
+   const prices=comparisonPrices.get(o.variant_id)||[];
+   return {...o,options:JSON.parse(o.options),specs:JSON.parse(o.specs),price_rank:shopStatuses.get(o.shop_id)!=='active'?'Not publicly listed':!o.in_stock?'Not available':!prices.length?'Unranked':o.price<=prices[0]?'Cheapest':o.price>=prices.at(-1)?'Highest':'Mid',rank:1+prices.filter(p=>p<o.price).length,competing_shops:prices.length};
+  });
   json(res,{shops,offers,categories,models});return;
  }
+ if(req.method==='GET'&&action==='variants'){const shop=await owned();const product=await db.prepare("SELECT id FROM catalog_products WHERE id=? AND deleted_at IS NULL AND approval_status='approved'").get(url.searchParams.get('product'));if(!product)fail('Choose an approved product.',404);const variants=await db.prepare("SELECT id,product_id,options,specs,base_price,currency FROM catalog_variants WHERE product_id=? AND deleted_at IS NULL AND approval_status='approved' ORDER BY base_price,id").all(product.id);json(res,{shop_id:shop.id,variants:variants.map(v=>({...v,options:JSON.parse(v.options),specs:JSON.parse(v.specs)}))});return;}
  if(req.method==='GET'&&action==='history'){
-  const offer=await db.prepare('SELECT * FROM offers WHERE id=?').get(url.searchParams.get('offer'));if(!offer)fail('Offer not found.',404);await shopOwned(db,user,offer.shop_id);
+  const offer=await db.prepare('SELECT * FROM offers WHERE id=?').get(url.searchParams.get('offer'));if(!offer)fail('Offer not found.',404);await ownerShop(db,user,offer.shop_id);
   json(res,{offer,history:await db.prepare('SELECT price,stock_status,is_seed,created_at FROM offer_history WHERE offer_id=? ORDER BY created_at DESC LIMIT ?').all(offer.id,config.offerHistoryLimit)});return;
  }
  if(req.method==='GET'&&action==='offers.csv'){
@@ -43,13 +49,13 @@ export async function shopOfferApi({db,req,res,url,body,user,json}){
  }
  if(req.method!=='POST')fail('Shop endpoint not found.',404);
  if(action==='offer'){
-  const shop=await owned(),value=await normalizedOffer(db,body,shop);const id=await withTransaction(db,tx=>writeOffer(tx,user,value));json(res,{ok:true,id});return;
+  const shop=await owned(),value=await normalizedOffer(db,body,shop);const id=await withTransaction(db,async tx=>{await ownerShop(tx,user,shop.id,{editable:true});return writeOffer(tx,user,value);});json(res,{ok:true,id});return;
  }
  if(action==='import'){
   const shop=await owned();if(typeof body.csv!=='string')fail('Select a CSV file.');let rows;try{rows=parseCSV(body.csv);}catch(error){fail(error.message);}if(!rows.length||rows.length>config.bulkOfferLimit)fail('CSV row count is outside the configured limit.');
   const values=await Promise.all(rows.map(async(row,index)=>{try{return await normalizedOffer(db,row,shop);}catch(error){fail('CSV row '+(index+2)+': '+error.message,error.status);}}));
   if(new Set(values.map(v=>v.variant_id)).size!==values.length)fail('CSV contains duplicate variant IDs.');
-  await withTransaction(db,async tx=>{for(const value of values)await writeOffer(tx,user,value);});json(res,{ok:true,imported:values.length});return;
+  await withTransaction(db,async tx=>{await ownerShop(tx,user,shop.id,{editable:true});for(const value of values)await writeOffer(tx,user,value);});json(res,{ok:true,imported:values.length});return;
  }
  if(action==='request'){
   const shop=await owned();if(!['product','variant'].includes(body.kind))fail('Choose a product or variant request.');let payload;try{payload=typeof body.payload==='string'?JSON.parse(body.payload):body.payload;}catch{fail('Request details must be valid JSON.');}

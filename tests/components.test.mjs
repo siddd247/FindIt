@@ -46,7 +46,7 @@ test('shared buyer chips still select valid variants, retain URLs and show four 
 });
 test('shop dashboard shared fields retain offer names and CSV/history actions',async()=>{
  const b=browser();try{
-  const data={shops:[{id:'s',name:'Fixture shop'}],models:[{id:'p',brand:'Fixture',model_name:'Model'}],categories:[{id:'generic',name:'Generic'}],offers:[{id:'o',shop_id:'s',variant_id:'v',product_id:'p',brand:'Fixture',model_name:'Model',slug:'model',options:{size:'Small'},price:1234,stock_status:'low_stock',price_rank:'Cheapest',rank:1,competing_shops:1,is_seed:0,shop_product_url:''}]};
+  const data={shops:[{id:'s',name:'Fixture shop',status:'active'}],models:[{id:'p',brand:'Fixture',model_name:'Model'}],categories:[{id:'generic',name:'Generic'}],offers:[{id:'o',shop_id:'s',variant_id:'v',product_id:'p',brand:'Fixture',model_name:'Model',slug:'model',options:{size:'Small'},price:1234,stock_status:'low_stock',price_rank:'Cheapest',rank:1,competing_shops:1,is_seed:0,shop_product_url:''}]};
   await mountShopModels({api:async()=>data,nav:()=>'',footer:()=>''});const html=b.html();assert.match(html,/class="ui-field"/);assert.match(html,/name="price"[^>]+value="1234"/);assert.match(html,/name="stock_status"/);assert.match(html,/value="low_stock" selected/);assert.match(html,/name="shop_product_url"/);assert.match(html,/data-offer-history="o"/);assert.match(html,/\/api\/shop\/offers.csv\?shop=s/);
  }finally{b.restore();}
 });

@@ -50,7 +50,7 @@ test('real Turso and Cloudinary support buyer, owner, admin, and restart-persist
   userId=(await db.prepare('SELECT id FROM users WHERE email=?').get(ownerEmail)).id;
   const shop=await request(0,'/api/shops',{cookie:signup.cookie,body:{name:`Phase 2 Shop ${userId.slice(0,8)}`,address:'Synthetic integration address',area:'Gandhi Nagar',pincode:'180001',phone:'+911234567890'}});
   assert.equal(shop.response.status,200,JSON.stringify(shop.payload));
-  assert.equal(shop.payload.shop.status,'active');
+  assert.equal(shop.payload.shop.status,'pending');
   shopId=shop.payload.shop.id;
 
   await db.prepare('INSERT INTO products(id,brand,model,name,specs,category_id,aliases,sample) VALUES (?,?,?,?,?,?,?,0)').run(productId,'Phase2Synthetic','Persistence Widget',`Phase2Synthetic Persistence Widget ${productId.slice(0,8)}`,JSON.stringify({summary:'Synthetic integration fixture'}),'phones','[]');
@@ -60,6 +60,14 @@ test('real Turso and Cloudinary support buyer, owner, admin, and restart-persist
   assert.ok(created);listingId=created.id;
   const stock=await request(0,'/api/confirm',{cookie:signup.cookie,body:{shop_id:shop.payload.shop.id,listing_id:listingId,status:'low_stock'}});
   assert.equal(stock.response.status,200,JSON.stringify(stock.payload));
+  const adminPassword='phase2-admin-password-42';
+  const {passwordHash}=await import('../local/admin-auth.mjs');
+  await db.prepare('INSERT INTO admins(id,email,password_hash,created_at) VALUES (?,?,?,?)').run(adminId,`admin-${adminId}@phase2.invalid`,passwordHash(adminPassword),new Date().toISOString());
+  const adminLogin=await request(0,'/api/admin/login',{body:{email:`admin-${adminId}@phase2.invalid`,password:adminPassword}});
+  assert.equal(adminLogin.response.status,200,JSON.stringify(adminLogin.payload));
+  const dashboard=await request(0,'/api/admin/dashboard',{cookie:adminLogin.cookie});assert.equal(dashboard.response.status,200,JSON.stringify(dashboard.payload));
+  const approval=await request(0,'/api/admin/shop-status',{cookie:adminLogin.cookie,body:{id:shopId,status:'active'}});
+  assert.equal(approval.response.status,200,JSON.stringify(approval.payload));
   const search=await request(0,`/api/search?q=${encodeURIComponent('Phase2Synthetic Persistence Widget')}`);
   assert.equal(search.response.status,200);assert.ok(JSON.stringify(search.payload).includes(productId),'Buyer search should find the synthetic product.');
   const stored=await db.prepare('SELECT status_reported,price_min FROM listings WHERE id=?').get(listingId);
@@ -69,12 +77,7 @@ test('real Turso and Cloudinary support buyer, owner, admin, and restart-persist
   assert.equal(uploaded.response.status,200,JSON.stringify(uploaded.payload));imageUrl=uploaded.payload.url;
   const image=await request(0,imageUrl);assert.equal(image.response.status,200);assert.deepEqual(Buffer.from(await image.response.arrayBuffer()),validJpeg);
 
-  const adminPassword='phase2-admin-password-42';
-  const {passwordHash}=await import('../local/admin-auth.mjs');
-  await db.prepare('INSERT INTO admins(id,email,password_hash,created_at) VALUES (?,?,?,?)').run(adminId,`admin-${adminId}@phase2.invalid`,passwordHash(adminPassword),new Date().toISOString());
-  const adminLogin=await request(0,'/api/admin/login',{body:{email:`admin-${adminId}@phase2.invalid`,password:adminPassword}});
-  assert.equal(adminLogin.response.status,200,JSON.stringify(adminLogin.payload));
-  const dashboard=await request(0,'/api/admin/dashboard',{cookie:adminLogin.cookie});assert.equal(dashboard.response.status,200,JSON.stringify(dashboard.payload));
+
 
   await start(1);
   const ownerSession=await request(1,'/api/session',{cookie:signup.cookie});assert.equal(ownerSession.response.status,200);assert.equal(ownerSession.payload.user.email,ownerEmail);

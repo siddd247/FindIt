@@ -10,7 +10,7 @@ import {makeTestDirectory,freePort,stopServer} from './helpers/runtime.mjs';
 import {getShopPrices} from '../web/shop-pricing.mjs';
 import {simulationSearchMatches} from '../web/simulation.mjs';
 
-test('release startup, separate sessions, active owner registration, filters and graceful SQLite shutdown',async t=>{
+test('release startup, separate sessions, immediate owner access and moderated shop registration, filters and graceful SQLite shutdown',async t=>{
  const directory=makeTestDirectory(path.resolve('.local/release-test-')),port=await freePort(),base='http://127.0.0.1:'+port;
  const proc=spawn(process.execPath,['scripts/start-local.mjs'],{env:{...process.env,SEED_SAMPLE_DATA:'0',OWNER_AUTO_APPROVAL:'1',PORT:String(port),LOCAL_DATA_DIR:directory},windowsHide:true,stdio:['ignore','pipe','pipe','ipc']});
  let errors='';proc.stderr.on('data',chunk=>errors+=chunk);
@@ -32,7 +32,10 @@ test('release startup, separate sessions, active owner registration, filters and
  assert.equal((await call('admin/session',null,both)).data.user.role,'admin');
  assert.equal((await call('admin/session',{},both)).status,405);
  const registration=await call('shops',{name:'Fixture retailer',address:'Fixture address',area:'Gandhi Nagar',pincode:'180004',open:'10:00',close:'20:00'},owner.cookie);
- assert.equal(registration.data.shop.status,'active');
+ assert.equal(registration.data.shop.status,'pending');
+ assert.equal((await call('owner',null,owner.cookie)).status,200);
+ assert.equal((await call('shops')).data.shops.some(s=>s.id===registration.data.shop.id),false);
+ assert.equal((await call('admin/shop-status',{id:registration.data.shop.id,status:'active'},admin.cookie)).status,200);
  assert.equal((await call('admin/shop-edit',{id:registration.data.shop.id,open:'25:00',close:'20:00'},admin.cookie)).status,400);
  assert.equal((await call('admin/shop-edit',{id:registration.data.shop.id,open:'09:30',close:'20:00'},admin.cookie)).status,200);
  assert.equal(JSON.parse((await call('shops/'+registration.data.shop.id)).data.shop.hours).open,'09:30');
