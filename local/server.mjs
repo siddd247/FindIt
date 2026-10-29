@@ -23,11 +23,12 @@ import { availability,rank,compareBest,distanceKm,isOpen } from '../lib/rules.ts
 const root=path.resolve(path.dirname(fileURLToPath(import.meta.url)),'..');
 const dataDir=path.resolve(root,process.env.VERCEL==='1'?path.join(os.tmpdir(),'nearbuy-vercel'):process.env.LOCAL_DATA_DIR||'.local');
 mkdirSync(dataDir,{recursive:true});mkdirSync(path.join(dataDir,'uploads'),{recursive:true});
-const imageStorage=(process.env.IMAGE_STORAGE==='cloudinary'||(process.env.VERCEL==='1'&&Boolean(process.env.CLOUDINARY_CLOUD_NAME)))
+const hasCloudinary=Boolean(process.env.CLOUDINARY_CLOUD_NAME&&process.env.CLOUDINARY_API_KEY&&process.env.CLOUDINARY_API_SECRET);
+const imageStorage=(process.env.IMAGE_STORAGE==='cloudinary'||process.env.VERCEL==='1')&&hasCloudinary
  ?createCloudinaryStorage()
  :createMockCloudinaryStorage({directory:path.join(dataDir,'uploads')});
 const db=openApplicationDatabase({dataDir});
-if(db.kind==='sqlite')await db.exec('PRAGMA journal_mode=WAL;');
+if(db.kind==='sqlite')await db.exec(process.env.VERCEL==='1'?'PRAGMA journal_mode=MEMORY;':'PRAGMA journal_mode=WAL;');
 await db.exec(readFileSync(path.join(root,'local','schema.sql'),'utf8'));
 await migrateAsync(db);
 const id=()=>randomUUID(),now=()=>new Date().toISOString(),hash=s=>createHash('sha256').update(s).digest('hex');
