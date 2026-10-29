@@ -50,7 +50,7 @@ test('Turso adapter maps asynchronous execute results and transaction boundaries
   assert.equal(calls.find(call => call.sql?.startsWith('SELECT')).args[0], 't');
 });
 
-test('Vercel storage selection requires Turso credentials and cannot fall back to local disk', () => {
-  assert.throws(() => openApplicationDatabase({ dataDir: '.local/test', env: { VERCEL: '1' } }), /TURSO_DATABASE_URL/);
+test('Turso storage selection requires Turso credentials', () => {
+  assert.throws(() => openApplicationDatabase({ dataDir: '.local/test', env: { NEARBY_DATABASE: 'turso' } }), /TURSO_DATABASE_URL/);
 });
 
