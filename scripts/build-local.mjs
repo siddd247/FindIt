@@ -35,7 +35,7 @@ for (const source of files) {
   }
   manifest.push({ file: target, sha256: createHash('sha256').update(content).digest('hex') });
 }
-writeFileSync(path.join(out, 'package.json'), JSON.stringify({ name: 'nearby-stock-finder-runtime', private: true, type: 'module', engines: { node: '>=24.16.0 <25' }, scripts: { start: 'node scripts/start-local.mjs' } }, null, 2));
+writeFileSync(path.join(out, 'package.json'), JSON.stringify({ name: 'nearby-stock-finder-runtime', private: true, type: 'module', engines: { node: '24.x' }, scripts: { start: 'node scripts/start-local.mjs' } }, null, 2));
 writeFileSync(path.join(out, 'BUILD-MANIFEST.json'), JSON.stringify({ builtAt: new Date().toISOString(), node: process.version, files: manifest }, null, 2));
 mkdirSync(path.join(root, '.local'), { recursive: true });
 const data = temporaryDirectory(path.join(root, '.local', 'build-smoke-'));
