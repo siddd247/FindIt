@@ -62,7 +62,7 @@ async function current(req){
       const expectedSig=createHmac('sha256',userRow.password_hash).update(rand+':'+userRow.id+':'+issuedAtStr).digest('hex');
       if(sig.length===expectedSig.length&&timingSafeEqual(Buffer.from(sig),Buffer.from(expectedSig))){
        const expStr=new Date(issuedAt+7*86400000).toISOString();
-       await run('INSERT OR REPLACE INTO sessions(id,user_id,expires_at,created_at) VALUES (?,?,?,?)',tokenDigest,userRow.id,expStr,now());
+       await run('INSERT OR REPLACE INTO sessions(id,user_id,expires_at) VALUES (?,?,?)',tokenDigest,userRow.id,expStr);
        u={id:userRow.id,email:userRow.email,role:userRow.role};
       }
      }
