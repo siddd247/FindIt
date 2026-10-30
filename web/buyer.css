@@ -232,7 +232,7 @@
 @media(max-width:1024px){.product-layout{grid-template-columns:minmax(0,1fr);grid-template-areas:'intro' 'art' 'options' 'compare' 'specs';gap:var(--space-6)}.comparison-panel{position:static;max-height:none}.model-offers{overflow:visible;overscroll-behavior:auto}.model-art{min-height:280px}.mobile-model-price{display:block;font-size:var(--text-2xl);font-weight:var(--font-weight-bold);font-variant-numeric:tabular-nums;margin:var(--space-4) 0 0}.catalog-results-layout{grid-template-columns:minmax(0,1fr);gap:var(--space-6)}.catalog-filter-panel{position:static}.catalog-filter-body{max-height:none;overflow:visible;grid-template-columns:repeat(2,minmax(0,1fr));gap:var(--space-4)}.filter-actions{grid-column:1/-1;grid-template-columns:1fr 1fr}.discovery-intro{gap:var(--space-8)}.category-grid{grid-template-columns:repeat(3,minmax(0,1fr))}}
 @media(max-width:768px){.shell{width:calc(100% - var(--space-8))}.buyer-page{padding-top:var(--space-6)}.buyer-page-heading{flex-direction:column;gap:var(--space-4);margin-bottom:var(--space-6)}.discovery-intro{grid-template-columns:minmax(0,1fr);padding-top:var(--space-10);padding-bottom:var(--space-8)}.discovery-intro h1{max-width:100%;font-size:clamp(2.5rem,9vw,3.5rem)}.discovery-intro>div>p{font-size:var(--text-base)}.market-stats{gap:var(--space-6);justify-content:space-between}.market-stats>div{flex-direction:column;align-items:flex-start;gap:var(--space-1)}.market-stats dt{font-size:var(--text-xs)}.market-stats dd{font-size:var(--text-xl)}.category-grid{grid-template-columns:repeat(2,minmax(0,1fr));gap:0 var(--space-4)}.buyer-main .section{padding-top:var(--space-8)}.directory-grid{grid-template-columns:minmax(0,1fr)}.directory-filter.panel{grid-template-columns:minmax(0,1fr)}.retailer-facts{grid-template-columns:minmax(0,1fr);gap:var(--space-4)}.retailer-header{gap:var(--space-5)}.retailer-identity{gap:var(--space-4)}.retailer-mark{width:48px;height:48px}.retailer-mark .icon{width:28px;height:28px}.retailer-identity h1{font-size:var(--text-3xl)}.retailer-categories{gap:var(--space-2);padding-bottom:var(--space-6);margin-bottom:var(--space-6)}.home-how .steps{grid-template-columns:minmax(0,1fr);gap:var(--space-6)}.home-owner-strip{align-items:flex-start;flex-direction:column}.hero-search-panel{padding:var(--space-5)}.location-panel{width:min(320px,calc(100vw - 80px))}}
 @media(max-width:640px){.nav{gap:var(--space-2)}.brand{font-size:1.125rem;gap:var(--space-2)}.brandmark{width:32px;height:32px}.brandmark .icon{width:24px;height:24px}.brand small{display:none}.nav-actions{gap:var(--space-1)}.nav-actions select{width:64px;font-size:var(--text-sm);padding:var(--space-1)}.nav-actions .theme-picker>summary{width:44px;min-width:44px;min-height:44px}.catalogue-grid{grid-template-columns:minmax(0,1fr);gap:var(--space-5)}.catalog-filter-body{grid-template-columns:minmax(0,1fr)}.filter-actions{grid-template-columns:minmax(0,1fr)}.catalog-query{gap:var(--space-2);padding-left:var(--space-3);margin-bottom:var(--space-6)}.catalog-query>.icon{width:18px;height:18px}.catalog-query>.button{min-width:72px;padding-inline:var(--space-3)}.catalog-query input{font-size:var(--text-base)}.discovery-card-art{aspect-ratio:16/9}.model-art{min-height:240px;padding:var(--space-8)}.comparison-heading{padding:var(--space-5)}.comparison-note{padding-inline:var(--space-5)}.model-offer.panel{padding:var(--space-4) var(--space-5);gap:var(--space-3)}.offer-actions .text-button{margin-left:0}.product-specs dl>div{grid-template-columns:minmax(0,1fr);gap:var(--space-2)}.product-specs .section-heading{align-items:flex-start;flex-direction:column;gap:var(--space-2)}.buyer-results-heading>span{font-size:var(--text-xs)}.retailer-actions{width:100%}.retailer-actions .button{flex:1}.hero-search-panel .searchbox{gap:var(--space-1)}.hero-search-panel .searchbox>svg{width:18px;height:18px}.hero-search-panel .searchbox button .icon{display:none}.category-card{gap:var(--space-2);min-height:80px}.category-card:last-child{min-height:80px}.category-card strong{font-size:var(--text-xs)}.category-art{width:32px;height:32px}.category-art svg{width:24px;height:24px}.home-owner-strip>.button{width:100%}}
-@media(prefers-reduced-motion:reduce){.catalogue-card,.catalogue-card.panel,.catalog-filter-panel>summary>.icon,.category-card,.category-art,.category-card>span:last-child .icon,.home-how .steps>div,.hero-search-panel,.discovery-intro *,.market-stats{animation:none!important;transition:none!important;transform:none!important}}
+@media(prefers-reduced-motion:reduce){.catalogue-card,.catalogue-card.panel,.catalog-filter-panel>summary>.icon,.category-card,.category-art,.category-card>span:last-child .icon,.home-how .steps>div,.hero-search-panel,.discovery-intro *,.market-stats,.product-layout,.buyer-page,.results-page,.catalog-results-layout,.listing-list,.simulated-search,.catalogue-grid,.loading-spinner,.loading-text,.variant-chips button,.results-tabs button{animation:none!important;transition:none!important;transform:none!important}}
 
 .directory-count{font-size:var(--text-sm);font-variant-numeric:tabular-nums;color:var(--text-muted);white-space:nowrap;padding-top:var(--space-3)}
 .directory-note{color:var(--text-muted);font-size:var(--text-xs);margin:var(--space-6) 0 0;max-width:72ch}
@@ -253,3 +253,64 @@ footer{border-top:1px solid var(--border);background:var(--page-surface-overlay)
 @media(max-width:640px){.topbar .brand{width:clamp(160px,50vw,200px);height:44px;flex-basis:clamp(160px,50vw,200px);font-size:1.375rem}.topbar .brandmark{width:40px;height:40px}}
 
 @media(max-width:380px){.topbar .brand{width:136px;flex-basis:136px;gap:6px;font-size:1.125rem}.topbar .brandmark{width:36px;height:36px}.nav-actions select{width:48px}}
+
+/* Smooth Page & View Transitions */
+@keyframes pageFadeIn{from{opacity:0.75;transform:translateY(6px)}to{opacity:1;transform:translateY(0)}}
+@keyframes spinnerRotate{to{transform:rotate(360deg)}}
+@keyframes subtlePulse{0%,100%{opacity:0.65}50%{opacity:1}}
+
+.initial-loading-view{display:flex;flex-direction:column;align-items:center;justify-content:center;min-height:55vh;gap:var(--space-4);text-align:center;padding:var(--space-12) 0;animation:pageFadeIn 0.3s var(--ease-out) both}
+.loading-mark{display:flex;align-items:center;gap:var(--space-3);color:var(--text)}
+.loading-spinner{width:32px;height:32px;border:3px solid var(--border);border-top-color:var(--accent);border-radius:var(--radius-round);animation:spinnerRotate 0.8s linear infinite;flex-shrink:0}
+.loading-brand{font-family:var(--font-heading);font-size:1.65rem;font-weight:800;letter-spacing:var(--tracking-tightest);color:var(--text)}
+.loading-text{font-size:var(--text-sm);color:var(--text-muted);letter-spacing:var(--tracking-normal);margin:0;animation:subtlePulse 1.8s ease-in-out infinite}
+
+.product-layout,.buyer-page,.results-page,.catalog-results-layout,.listing-list,.simulated-search,.catalogue-grid{
+ animation:pageFadeIn 0.22s var(--ease-out) both;
+}
+
+.results-tabs button{
+ position:relative;border-radius:var(--radius-sm);cursor:pointer;
+ transition:background-color 0.2s var(--ease-out),color 0.2s var(--ease-out),box-shadow 0.2s var(--ease-out),transform 0.15s var(--ease-out);
+}
+.results-tabs button:hover:not([aria-pressed=true]){
+ background:var(--surface-muted);transform:translateY(-1px);
+}
+.results-tabs button:active{
+ transform:scale(0.98);
+}
+.results-tabs button[aria-pressed=true]{
+ background:var(--bg);color:var(--green);box-shadow:var(--shadow-card);
+}
+.results-tabs button span{
+ transition:background-color 0.2s ease,color 0.2s ease;
+}
+
+.variant-chips button{
+ transition:background-color 0.18s ease,border-color 0.18s ease,color 0.18s ease,transform 0.18s var(--ease-out),box-shadow 0.18s ease;
+}
+.variant-chips button:hover{
+ transform:translateY(-1.5px);
+ border-color:var(--text-muted);
+ box-shadow:var(--shadow-sm);
+}
+.variant-chips button:active{
+ transform:translateY(0) scale(0.97);
+}
+.variant-chips button[aria-pressed=true]{
+ background:var(--accent-surface);
+ color:var(--accent);
+ border-color:var(--accent);
+ box-shadow:0 0 0 1px var(--accent),var(--shadow-sm);
+ transform:none;
+}
+
+.model-price,.mobile-model-price{
+ transition:color 0.2s ease,opacity 0.2s ease,transform 0.2s var(--ease-out);
+}
+.model-art img{
+ transition:opacity 0.22s ease,transform 0.3s var(--ease-out);
+}
+.model-offers{
+ transition:opacity 0.2s ease;
+}

@@ -11,7 +11,7 @@ const date=value=>value&&!Number.isNaN(Date.parse(value))?new Date(value).toLoca
 const breadcrumb=items=>'<div class="breadcrumb" role="navigation" aria-label="Breadcrumb">'+items.map(([text,url],i)=>(i?'<span aria-hidden="true">'+Icon('chevron',14)+'</span>':'')+(url?'<a href="'+h(url)+'">'+h(text)+'</a>':'<span aria-current="page">'+h(text)+'</span>')).join('')+'</div>';
 export async function mountCatalogue({api,nav,footer,page,entityId}){
  const app=document.querySelector('#app');let data,selection={},chosen,params=new URLSearchParams(location.search),requestId=0;
- const shell=html=>{app.innerHTML=nav()+'<main id="main" class="buyer-main"><section class="shell buyer-page">'+html+'</section></main>'+footer();};
+ const shell=html=>{const main=app.querySelector?.('main.buyer-main'),sec=main?.querySelector?.('section.buyer-page');if(sec){sec.innerHTML=html;}else{app.innerHTML=nav()+'<main id="main" class="buyer-main"><section class="shell buyer-page">'+html+'</section></main>'+footer();}};
  const error=message=>shell('<div role="alert">'+UI.empty('Could not load this page',message,UI.button('Browse products',{href:'/search'}),'alert')+'</div>');
  function selectors(){return data.product.option_axes.map(axis=>{
   const values=axis.values.map(value=>({...value,compatible:data.variants.some(v=>String(v.options[axis.key])===String(value.value)&&Object.entries(selection).filter(([key])=>key!==axis.key).every(([key,selected])=>String(v.options[key])===String(selected)))}));
