@@ -28,7 +28,20 @@ test('every stock image file exists and is synchronized to web/images', () => {
     'iphone-16e.jpg',
     'iphone-17.jpg',
     'iphone-18.jpg',
-    'iphone-x.jpg'
+    'iphone-x.jpg',
+    'airpods.jpg',
+    'asus.jpg',
+    'jbl.jpg',
+    'oppo.jpg',
+    'phillips.jpg',
+    'razer.jpg',
+    'samsung.jpg',
+    'sony.jpg',
+    'tcl.jpg',
+    'ugreen.jpg',
+    'vivo.jpg',
+    'wings-lifestyle.jpg',
+    'xiaomi.jpg'
   ];
 
   for (const file of expectedFiles) {
@@ -73,6 +86,19 @@ test('product image matching rules correctly match target product families', () 
   check('dyson.jpg', 'Dyson', 'V15 Detect Cordless Vacuum Cleaner');
   check('anker.jpg', 'Anker', 'Prime 200W Power Bank (20,000mAh)');
   check('lg-c4-oled.jpg', 'LG', 'OLED evo C4 Series 4K TV (48-inch)');
+  check('airpods.jpg', 'Apple', 'AirPods Max (USB-C)');
+  check('asus.jpg', 'ASUS', 'ROG Zephyrus G16 OLED');
+  check('jbl.jpg', 'JBL', 'Tune 770NC');
+  check('oppo.jpg', 'OPPO', 'Reno 12 Pro 5G');
+  check('phillips.jpg', 'Philips', 'Airfryer XXL Connected (7000 Series)');
+  check('razer.jpg', 'Razer', 'DeathAdder V3 Pro Wireless Gaming Mouse');
+  check('samsung.jpg', 'Samsung', 'Galaxy S24');
+  check('sony.jpg', 'Sony', 'Bravia 8 OLED 4K TV (65-inch)');
+  check('tcl.jpg', 'TCL', 'QM8 QD-Mini LED 4K TV (65-inch)');
+  check('ugreen.jpg', 'Ugreen', 'Nexode Pro 160W 4-Port GaN Fast Charger');
+  check('vivo.jpg', 'Vivo', 'Vivo T3 5G');
+  check('wings-lifestyle.jpg', 'Wings Lifestyle', 'Phantom 380');
+  check('xiaomi.jpg', 'Xiaomi', 'Redmi Note 13 5G');
 });
 
 test('isolated SQLite database updates product images without modifying other fields', () => {
@@ -85,7 +111,7 @@ test('isolated SQLite database updates product images without modifying other fi
   `);
   db.prepare("INSERT INTO catalog_products VALUES ('p1', 'apple-iphone-15', 'Apple', 'iPhone 15', 'phones', '[]', NULL)").run();
   db.prepare("INSERT INTO catalog_variants VALUES ('v1', 'p1', '[]', NULL)").run();
-  db.prepare("INSERT INTO catalog_products VALUES ('p2', 'samsung-s24', 'Samsung', 'Galaxy S24', 'phones', '[]', NULL)").run();
+  db.prepare("INSERT INTO catalog_products VALUES ('p2', 'motorola-edge-50', 'Motorola', 'Edge 50 Pro', 'phones', '[]', NULL)").run();
   db.prepare("INSERT INTO catalog_variants VALUES ('v2', 'p2', '[]', NULL)").run();
   db.prepare("INSERT INTO products VALUES ('l1', 'Apple', 'iPhone 15', 'Apple iPhone 15', 'phones', NULL, NULL)").run();
 

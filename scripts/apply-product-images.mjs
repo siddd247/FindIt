@@ -23,7 +23,20 @@ export const productRules = [
   { file: '/images/products/xm6.jpg', match: p => /(wh-1000xm|wf-1000xm|1000xm[456])/i.test(p.brand + ' ' + (p.model_name || p.model || p.name)) },
   { file: '/images/products/dyson.jpg', match: p => /dyson/i.test(p.brand + ' ' + (p.model_name || p.model || p.name)) },
   { file: '/images/products/anker.jpg', match: p => /anker/i.test(p.brand + ' ' + (p.model_name || p.model || p.name)) },
-  { file: '/images/products/lg-c4-oled.jpg', match: p => /lg/i.test(p.brand) && /(oled|c4)/i.test(p.model_name || p.model || p.name) }
+  { file: '/images/products/lg-c4-oled.jpg', match: p => /lg/i.test(p.brand) && /(oled|c4)/i.test(p.model_name || p.model || p.name) },
+  { file: '/images/products/airpods.jpg', match: p => /airpods/i.test(p.brand + ' ' + (p.model_name || p.model || p.name)) },
+  { file: '/images/products/asus.jpg', match: p => /asus/i.test(p.brand) },
+  { file: '/images/products/jbl.jpg', match: p => /jbl/i.test(p.brand) },
+  { file: '/images/products/oppo.jpg', match: p => /oppo/i.test(p.brand) },
+  { file: '/images/products/phillips.jpg', match: p => /philips/i.test(p.brand) },
+  { file: '/images/products/razer.jpg', match: p => /razer/i.test(p.brand) },
+  { file: '/images/products/samsung.jpg', match: p => /samsung/i.test(p.brand) },
+  { file: '/images/products/sony.jpg', match: p => /sony/i.test(p.brand) },
+  { file: '/images/products/tcl.jpg', match: p => /tcl/i.test(p.brand) },
+  { file: '/images/products/ugreen.jpg', match: p => /ugreen/i.test(p.brand) },
+  { file: '/images/products/vivo.jpg', match: p => /vivo/i.test(p.brand) },
+  { file: '/images/products/wings-lifestyle.jpg', match: p => /wings/i.test(p.brand) },
+  { file: '/images/products/xiaomi.jpg', match: p => /(xiaomi|redmi)/i.test(p.brand + ' ' + (p.model_name || p.model || p.name)) }
 ];
 
 export function syncStockImages(sourceDir = 'stock', webDir = 'web') {
@@ -53,7 +66,22 @@ export function syncStockImages(sourceDir = 'stock', webDir = 'web') {
     ['iphone/iphone15.jpg', 'iphone-15.jpg'],
     ['iphone/iphone16.jpg', 'iphone-16.jpg'],
     ['iphone/iphone16e.jpg', 'iphone-16e.jpg'],
-    ['iphone/iphone17.jpg', 'iphone-17.jpg']
+    ['iphone/iphone17.jpg', 'iphone-17.jpg'],
+    ['new/airpods.jpg', 'airpods.jpg'],
+    ['new/asus.jpg', 'asus.jpg'],
+    ['new/jbl.jpg', 'jbl.jpg'],
+    ['new/oppo.jpg', 'oppo.jpg'],
+    ['new/phillips.jpg', 'phillips.jpg'],
+    ['new/phillips.jpg', 'philips.jpg'],
+    ['new/razer.jpg', 'razer.jpg'],
+    ['new/samsung.jpg', 'samsung.jpg'],
+    ['new/sony.jpg', 'sony.jpg'],
+    ['new/tcl.jpg', 'tcl.jpg'],
+    ['new/ugreen.jpg', 'ugreen.jpg'],
+    ['new/vivo.jpg', 'vivo.jpg'],
+    ['new/wings lifestyle.jpg', 'wings lifestyle.jpg'],
+    ['new/wings lifestyle.jpg', 'wings-lifestyle.jpg'],
+    ['new/xiaomi.jpg', 'xiaomi.jpg']
   ];
 
   for (const [srcRel, dstName] of filesMap) {
