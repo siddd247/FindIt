@@ -93,7 +93,8 @@ export function openTursoDatabase({ url = process.env.TURSO_DATABASE_URL, authTo
 
 /** Select persistence explicitly. Never silently fall back to ephemeral disk in Vercel. */
 export function openApplicationDatabase({ dataDir, env = process.env, client } = {}) {
-  if (client || (env.TURSO_DATABASE_URL && env.TURSO_AUTH_TOKEN) || env.NEARBY_DATABASE === 'turso') {
+  const isVercel = env.VERCEL === '1' && env.NEARBY_DATABASE !== 'sqlite';
+  if (client || (env.TURSO_DATABASE_URL && env.TURSO_AUTH_TOKEN) || env.NEARBY_DATABASE === 'turso' || isVercel) {
     return openTursoDatabase({ url: env.TURSO_DATABASE_URL, authToken: env.TURSO_AUTH_TOKEN, client });
   }
   if (!dataDir) throw new Error('dataDir is required for local SQLite storage.');

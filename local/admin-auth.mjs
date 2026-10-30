@@ -9,27 +9,7 @@ export async function adminIdentity(db,req){
  const token=req.headers.cookie?.match(/(?:^|; )nearby_admin=([^;]+)/)?.[1];
  if(!token)return null;
  const time=Date.now(),tokenDigest=digest(token);
- let s=await db.prepare('SELECT s.*,a.email,a.disabled_at,a.password_hash FROM admin_sessions s JOIN admins a ON a.id=s.admin_id WHERE s.id=?').get(tokenDigest);
- if(!s&&token.includes('.')){
-  const parts=token.split('.');
-  if(parts.length===4){
-   const [rand,adminId,issuedAtStr,sig]=parts,issuedAt=Number(issuedAtStr);
-   if(Number.isFinite(issuedAt)&&time>=issuedAt&&(time-issuedAt)<43200000){
-    const loggedOut=await db.prepare("SELECT id FROM admin_actions WHERE kind='admin_logout' AND target_id=?").get(tokenDigest);
-    if(!loggedOut){
-     const a=await db.prepare('SELECT id,email,password_hash,disabled_at FROM admins WHERE id=? AND disabled_at IS NULL').get(adminId);
-     if(a){
-      const expectedSig=createHmac('sha256',a.password_hash).update(`${rand}:${a.id}:${issuedAtStr}`).digest('hex');
-      if(sig.length===expectedSig.length&&timingSafeEqual(Buffer.from(sig),Buffer.from(expectedSig))){
-       const nowStr=new Date(time).toISOString(),expStr=new Date(issuedAt+43200000).toISOString();
-       await db.prepare('INSERT OR REPLACE INTO admin_sessions(id,admin_id,created_at,last_seen_at,expires_at) VALUES (?,?,?,?,?)').run(tokenDigest,a.id,nowStr,nowStr,expStr);
-       s={id:tokenDigest,admin_id:a.id,email:a.email,disabled_at:null,expires_at:expStr,last_seen_at:nowStr};
-      }
-     }
-    }
-   }
-  }
- }
+ const s=await db.prepare('SELECT s.*,a.email,a.disabled_at FROM admin_sessions s JOIN admins a ON a.id=s.admin_id WHERE s.id=?').get(tokenDigest);
  if(!s||s.disabled_at||Date.parse(s.expires_at)<=time||time-Date.parse(s.last_seen_at)>30*60000){
   if(s)await db.prepare('DELETE FROM admin_sessions WHERE id=?').run(s.id);
   return null;
@@ -57,7 +37,7 @@ export async function adminAuthRoutes({db,req,res,route,body,settings,json,rate}
   const email=String(body.email||'').trim().toLowerCase(),a=await db.prepare('SELECT * FROM admins WHERE email=? AND disabled_at IS NULL').get(email);
   if(a?.locked_until&&Date.parse(a.locked_until)>Date.now())throw Object.assign(new Error('Account locked temporarily. Try again in 15 minutes.'),{status:429});
   if(!a||!passwordMatches(body.password,a.password_hash)){if(a){const attempts=a.failed_attempts+1;await db.prepare('UPDATE admins SET failed_attempts=?,locked_until=? WHERE id=?').run(attempts,attempts>=5?new Date(Date.now()+900000).toISOString():null,a.id);}await auditAdmin(db,a?.id||'anonymous','admin_login_failed',a?.id||'unknown');throw Object.assign(new Error('Admin email or password is incorrect.'),{status:401});}
-  await db.prepare('UPDATE admins SET failed_attempts=0,locked_until=NULL WHERE id=?').run(a.id);const rand=randomBytes(16).toString('hex'),issuedAt=Date.now(),sig=createHmac('sha256',a.password_hash).update(`${rand}:${a.id}:${issuedAt}`).digest('hex'),token=`${rand}.${a.id}.${issuedAt}.${sig}`;await db.prepare('INSERT INTO admin_sessions(id,admin_id,created_at,last_seen_at,expires_at) VALUES (?,?,?,?,?)').run(digest(token),a.id,now,now,new Date(Date.now()+43200000).toISOString());await auditAdmin(db,a.id,'admin_login',a.id);json(res,{ok:true},200,adminCookie(token));return true;
+  await db.prepare('UPDATE admins SET failed_attempts=0,locked_until=NULL WHERE id=?').run(a.id);const token=randomBytes(32).toString('hex');await db.prepare('INSERT INTO admin_sessions(id,admin_id,created_at,last_seen_at,expires_at) VALUES (?,?,?,?,?)').run(digest(token),a.id,now,now,new Date(Date.now()+43200000).toISOString());await auditAdmin(db,a.id,'admin_login',a.id);json(res,{ok:true},200,adminCookie(token));return true;
  }
  const a=await requireAdmin(db,req);if(route==='admin/logout'){const token=req.headers.cookie?.match(/nearby_admin=([^;]+)/)?.[1],tokenDigest=token?digest(token):'';if(tokenDigest){await db.prepare('DELETE FROM admin_sessions WHERE id=?').run(tokenDigest);await auditAdmin(db,a.id,'admin_logout',tokenDigest);}json(res,{ok:true},200,adminCookie('',0));return true;}
  const account=await db.prepare('SELECT password_hash FROM admins WHERE id=?').get(a.id);if(!passwordMatches(body.currentPassword,account.password_hash))throw Object.assign(new Error('Current password is incorrect.'),{status:403});const hash=passwordHash(body.newPassword);await db.prepare('UPDATE admins SET password_hash=?,updated_at=? WHERE id=?').run(hash,now,a.id);await db.prepare('DELETE FROM admin_sessions WHERE admin_id=?').run(a.id);await auditAdmin(db,a.id,'admin_password_changed',a.id);json(res,{ok:true,message:'Password updated. Sign in again.'},200,adminCookie('',0));return true;
