@@ -7,7 +7,7 @@ import {openApplicationDatabase} from './database.mjs';
 import {withTransaction} from './db-utils.mjs';
 import {listModels,getModel,archivedModel} from './catalog-read.mjs';
 import http from 'node:http';
-import { readFileSync, existsSync, mkdirSync, statSync } from 'node:fs';
+import { readFileSync, existsSync, mkdirSync, statSync, copyFileSync } from 'node:fs';
 import { fileURLToPath } from 'node:url';
 import path from 'node:path';
 import os from 'node:os';
@@ -23,6 +23,8 @@ import { availability,rank,compareBest,distanceKm,isOpen } from '../lib/rules.ts
 const root=path.resolve(path.dirname(fileURLToPath(import.meta.url)),'..');
 const dataDir=path.resolve(root,process.env.VERCEL==='1'?path.join(os.tmpdir(),'nearbuy-vercel'):process.env.LOCAL_DATA_DIR||'.local');
 mkdirSync(dataDir,{recursive:true});mkdirSync(path.join(dataDir,'uploads'),{recursive:true});
+const seedDb=path.join(root,'local','seed.sqlite'),liveDb=path.join(dataDir,'stock.sqlite');
+if(process.env.VERCEL==='1'&&!existsSync(liveDb)&&existsSync(seedDb))try{copyFileSync(seedDb,liveDb);}catch{}
 const hasCloudinary=Boolean(process.env.CLOUDINARY_CLOUD_NAME&&process.env.CLOUDINARY_API_KEY&&process.env.CLOUDINARY_API_SECRET);
 const imageStorage=(process.env.IMAGE_STORAGE==='cloudinary'||process.env.VERCEL==='1')&&hasCloudinary
  ?createCloudinaryStorage()
