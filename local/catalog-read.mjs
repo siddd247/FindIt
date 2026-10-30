@@ -8,7 +8,9 @@ export async function modelOffers(db,productId,shopId=''){
  return offers;
 }
 export async function listModels(db,params=new URLSearchParams()){
- const [parents,allVariants,categories]=await Promise.all([db.prepare("SELECT * FROM catalog_products WHERE deleted_at IS NULL AND approval_status='approved' ORDER BY brand,model_name").all(),db.prepare("SELECT v.*,p.aliases,p.name,p.model,p.brand FROM catalog_variants v LEFT JOIN products p ON p.id=v.legacy_product_id WHERE v.deleted_at IS NULL AND v.approval_status='approved'").all(),db.prepare('SELECT id,name FROM categories WHERE deleted_at IS NULL ORDER BY name').all()]);
+ const [parents,allVariants,categories,allRawOffers]=await Promise.all([db.prepare("SELECT * FROM catalog_products WHERE deleted_at IS NULL AND approval_status='approved' ORDER BY brand,model_name").all(),db.prepare("SELECT v.*,p.aliases,p.name,p.model,p.brand FROM catalog_variants v LEFT JOIN products p ON p.id=v.legacy_product_id WHERE v.deleted_at IS NULL AND v.approval_status='approved'").all(),db.prepare('SELECT id,name FROM categories WHERE deleted_at IS NULL ORDER BY name').all(),db.prepare("SELECT o.*,v.product_id,s.name AS shop_name,s.area,s.pincode FROM offers o JOIN catalog_variants v ON v.id=o.variant_id JOIN shops s ON s.id=o.shop_id WHERE v.deleted_at IS NULL AND s.status='active' AND s.deleted_at IS NULL AND o.approval_status='approved'").all()]);
+ const offersByProduct=new Map();for(const o of allRawOffers){let list=offersByProduct.get(o.product_id);if(!list){list=[];offersByProduct.set(o.product_id,list);}list.push(o);}
+ for(const list of offersByProduct.values()){list.sort((a,b)=>Number(!['available','low_stock'].includes(a.stock_status))-Number(!['available','low_stock'].includes(b.stock_status))||a.price-b.price||a.shop_id.localeCompare(b.shop_id));}
  const q=(params.get('q')||'').slice(0,150),brand=params.get('brand')||'',category=params.get('category')||'',shop=params.get('shop')||'',min=params.get('min'),max=params.get('max');
  if([min,max].some(v=>v!==null&&v!==''&&(!Number.isFinite(Number(v))||Number(v)<0))||min&&max&&Number(min)>Number(max))throw Object.assign(Error('Enter a valid price range.'),{status:400});
  const selections=[...params].filter(([key,value])=>key.startsWith('spec.')&&value).map(([key,value])=>[key.slice(5),value]);
@@ -20,7 +22,7 @@ export async function listModels(db,params=new URLSearchParams()){
   if(category&&p.category_id!==category||brand&&p.brand.toLowerCase()!==brand.toLowerCase())continue;
   const matching=variants.filter(v=>(!q||matchProduct({name:v.name||p.brand+' '+p.model_name,brand:p.brand,model:p.model_name,aliases:v.aliases||'[]'},q)>0)&&selections.every(([key,value])=>String(JSON.parse(v.specs)[key])===value));
   if(!matching.length)continue;
-  const offers=await modelOffers(db,p.id,shop),ids=new Set(matching.map(v=>v.id)),eligible=offers.filter(o=>ids.has(o.variant_id));if(shop&&!eligible.length)continue;
+  const offers=(offersByProduct.get(p.id)||[]).filter(o=>!shop||o.shop_id===shop),ids=new Set(matching.map(v=>v.id)),eligible=offers.filter(o=>ids.has(o.variant_id));if(shop&&!eligible.length)continue;
   const active=eligible.filter(o=>['available','low_stock'].includes(o.stock_status)),prices=(active.length?active:eligible).map(o=>o.price);
   const from=prices.length?Math.min(...prices):null,to=prices.length?Math.max(...prices):null;
   if(min&&(!from||from<Number(min))||max&&(!from||from>Number(max)))continue;

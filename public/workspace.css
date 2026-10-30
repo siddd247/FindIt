@@ -1,0 +1,57 @@
+/* Shop dashboard composition; primitives and all colors come from components.css/tokens.css. */
+.shop-model-workspace{width:min(1120px,calc(100% - var(--space-10)));padding-block:var(--space-10) var(--space-16)}
+.shop-model-workspace>.section-heading{align-items:flex-end;border-bottom:1px solid var(--border);padding-bottom:var(--space-6);margin-bottom:var(--space-6)}
+.shop-model-workspace>.section-heading h1{font-size:var(--text-3xl);margin:var(--space-2) 0}
+.shop-model-workspace>.section-heading p{margin:0;font-size:var(--text-sm)}
+.shop-model-workspace>#shop-model-select,.shop-model-workspace>label[for=shop-model-select]{display:block;max-width:520px}
+.shop-model-workspace>p{color:var(--text-muted)}
+.shop-model-workspace>.panel{margin-block:var(--space-5)}
+.shop-model-workspace>.panel>h2{font-size:var(--text-xl);margin-bottom:var(--space-2)}
+.shop-model-workspace>#shop-model-import{display:grid;grid-template-columns:minmax(0,1fr) auto;align-items:end;gap:var(--space-4);margin-top:var(--space-5)}
+.shop-model-workspace>#shop-model-import>label{min-width:0}
+.shop-model-workspace>#shop-model-import+.muted{font-size:var(--text-sm)}
+.shop-model-group.panel{padding:0;overflow:clip;margin-block:var(--space-3);box-shadow:none}
+.shop-model-group>summary{padding:var(--space-5) var(--space-6);min-height:68px;list-style-position:inside}
+.shop-model-group[open]>summary{background:var(--surface-muted);border-bottom:1px solid var(--border)}
+.shop-model-group>summary::marker{color:var(--accent)}
+.shop-model-group>summary>span{float:right;font-size:var(--text-sm);font-weight:var(--font-weight-normal)}
+.shop-variant-form{display:grid;gap:var(--space-4);padding:var(--space-5) var(--space-6);margin:0;border-top:1px solid var(--border)}
+.shop-variant-form:first-of-type{border-top:0}
+.shop-variant-form h3{font-size:var(--text-base);margin:0}
+.shop-variant-form>p{font-size:var(--text-sm);color:var(--text-muted);margin:0}
+.shop-variant-form>.row{gap:var(--space-3)}
+.shop-variant-form [id^=history-]{padding:var(--space-3);border-left:3px solid var(--accent);background:var(--surface-muted);font-size:var(--text-sm)}
+.shop-model-workspace>#shop-model-request{display:grid;gap:var(--space-4);margin-top:var(--space-10);padding:var(--space-6)}
+.shop-model-workspace>#shop-model-request>h2{margin:0}
+.shop-model-workspace>#shop-model-request>.muted{font-size:var(--text-sm);margin:0}
+.shop-model-workspace select,.shop-model-workspace input,.shop-model-workspace textarea{max-width:100%}
+.shop-model-workspace .button,.shop-model-workspace button{min-height:var(--control-height)}
+.workspace:not(.shop-model-workspace){width:min(var(--content-width),calc(100% - var(--space-10)));padding-block:var(--space-10) var(--space-16)}
+.workspace:not(.shop-model-workspace)>.section-heading{align-items:flex-end;padding-bottom:var(--space-6);border-bottom:1px solid var(--border)}
+.workspace:not(.shop-model-workspace)>.section-heading h1{font-size:var(--text-3xl)}
+.workspace:not(.shop-model-workspace)>.shop-select{display:flex;align-items:end;gap:var(--space-5);padding:var(--space-4) var(--space-5);box-shadow:none}
+.workspace:not(.shop-model-workspace)>.shop-select>a{margin-left:auto;color:var(--accent)}
+.workspace:not(.shop-model-workspace)>.stats{margin-block:var(--space-6)}
+.owner-list{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:var(--space-4)}
+.owner-list>.panel{margin:0;box-shadow:none}
+.owner-list>.panel>.section-heading{align-items:flex-start}
+.owner-list>.panel h3{font-size:var(--text-lg)}
+.workspace textarea{min-height:130px}
+@media(max-width:760px){.shop-model-workspace,.workspace:not(.shop-model-workspace){width:calc(100% - var(--space-8));padding-block:var(--space-6) var(--space-12)}.shop-model-workspace>.section-heading{align-items:flex-start}.shop-model-workspace>.section-heading h1{font-size:var(--text-2xl)}.shop-model-workspace>#shop-model-import{grid-template-columns:minmax(0,1fr)}.shop-model-group>summary{padding:var(--space-4);min-height:60px}.shop-variant-form{padding:var(--space-5) var(--space-4)}.shop-model-workspace>#shop-model-request{padding:var(--space-5)}.owner-list{grid-template-columns:minmax(0,1fr)}.workspace:not(.shop-model-workspace)>.shop-select{align-items:stretch;flex-wrap:wrap}.workspace:not(.shop-model-workspace)>.shop-select>a{margin-left:0}}
+@media(max-width:420px){.shop-variant-form>.row>.button,.shop-variant-form>.row>button{width:100%;justify-content:center}.shop-model-group>summary>span{float:none;display:block;margin:var(--space-1) 0 0 1.25rem}.workspace:not(.shop-model-workspace)>.section-heading{align-items:stretch}}
+.shop-model-workspace .shop-select{display:flex;gap:var(--space-4);align-items:end;flex-wrap:wrap}
+.shop-model-workspace .shop-select label{flex:1;min-width:180px}
+.shop-model-workspace .shop-approval{border-left:4px solid var(--border);margin-block:var(--space-4)}
+.shop-model-workspace .shop-approval p:last-child{margin-bottom:0}
+.shop-model-workspace .workspace-tabs{display:flex;gap:var(--space-4);flex-wrap:wrap;padding-block:var(--space-4);border-bottom:1px solid var(--border)}
+.shop-model-workspace [id^=owner-]{scroll-margin-top:120px}
+.shop-model-workspace details.panel{margin-block:var(--space-4)}
+.shop-model-workspace details.panel>summary{min-height:44px;cursor:pointer;font-weight:var(--font-weight-semibold)}
+.shop-model-workspace details.panel>form{padding-block:var(--space-4)}
+.shop-model-workspace .workspace-filters{display:flex;gap:var(--space-3);align-items:end;flex-wrap:wrap}
+.shop-model-workspace .workspace-filters label{flex:1;min-width:160px}
+.shop-model-workspace .workspace-success{padding:var(--space-4);border:1px solid var(--success-border);border-radius:var(--radius-md);color:var(--success);background:var(--success-surface)}
+.shop-model-workspace .error{padding:var(--space-4);border:1px solid var(--danger-border);color:var(--danger);background:var(--danger-surface)}
+.shop-variant-form>fieldset{min-width:0;border:0;padding:0;margin:0}
+.shop-variant-form fieldset[disabled]{opacity:.7}
+@media(max-width:760px){.shop-model-workspace .workspace-filters label{flex-basis:100%}.shop-model-workspace .shop-select label{flex-basis:100%}.shop-model-workspace>.section-heading{flex-wrap:wrap}}

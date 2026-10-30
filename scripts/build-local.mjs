@@ -1,7 +1,7 @@
 import {temporaryDirectory,removeTemporaryDirectory,stopServer,freePort} from './runtime-checks.mjs';
 import { buildSmokeEnvironment } from './build-smoke-env.mjs';
 import { stripTypeScriptTypes } from 'node:module';
-import { readFileSync, writeFileSync, mkdirSync, readdirSync, existsSync } from 'node:fs';
+import { readFileSync, writeFileSync, mkdirSync, readdirSync, existsSync, copyFileSync, cpSync } from 'node:fs';
 import path from 'node:path';
 import { fileURLToPath } from 'node:url';
 import { createHash } from 'node:crypto';
@@ -37,6 +37,14 @@ for (const source of files) {
 }
 writeFileSync(path.join(out, 'package.json'), JSON.stringify({ name: 'nearby-stock-finder-runtime', private: true, type: 'module', engines: { node: '24.x' }, scripts: { start: 'node scripts/start-local.mjs' } }, null, 2));
 writeFileSync(path.join(out, 'BUILD-MANIFEST.json'), JSON.stringify({ builtAt: new Date().toISOString(), node: process.version, files: manifest }, null, 2));
+const pub = path.join(root, 'public');
+mkdirSync(pub, { recursive: true });
+for (const entry of readdirSync(path.join(root, 'web'), { withFileTypes: true })) {
+  if (entry.name === 'index.html') continue;
+  const src = path.join(root, 'web', entry.name), dest = path.join(pub, entry.name);
+  if (entry.isDirectory()) cpSync(src, dest, { recursive: true });
+  else copyFileSync(src, dest);
+}
 mkdirSync(path.join(root, '.local'), { recursive: true });
 const data = temporaryDirectory(path.join(root, '.local', 'build-smoke-'));
 const port=await freePort();
