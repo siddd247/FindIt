@@ -11,7 +11,7 @@ import { readFileSync, existsSync, mkdirSync, statSync, copyFileSync } from 'nod
 import { fileURLToPath } from 'node:url';
 import path from 'node:path';
 import os from 'node:os';
-import { randomUUID, randomBytes, scryptSync, timingSafeEqual, createHash } from 'node:crypto';
+import { randomUUID, randomBytes, scryptSync, timingSafeEqual, createHash, createHmac } from 'node:crypto';
 import { config } from '../lib/config.ts';
 import { migrateAsync } from './migrate.mjs';
 import {securitySettings,adminAuthRoutes} from './admin-auth.mjs';
@@ -51,7 +51,7 @@ async function dataset(){const tables=await Promise.all(['shops','products','lis
 function enrich(d,origin=null){const shops=new Map(d.shops.map(s=>[s.id,s])),products=new Map(d.products.map(p=>[p.id,p]));return d.listings.map(l=>{const shop=shops.get(l.shop_id),product=products.get(l.product_id);if(!shop||!product)return null;const distance=origin&&shop.lat!==null&&shop.lng!==null?distanceKm(origin,shop):null,reviews=d.reviews.filter(r=>r.shop_id===shop.id),rating=reviews.length?reviews.reduce((a,r)=>a+r.rating,0)/reviews.length:null;return {...l,shop,product,distance,rating,reviewCount:reviews.length,open:shop.hours?isOpen(shop.hours):null,availability:availability(l,d.reports),rank:rank(l,distance??50,rating,reviews.length,d.reports)};}).filter(Boolean).sort(compareBest);}
 function publicListings(d,origin){return enrich(d,origin).filter(l=>l.shop.status==='active'&&!l.availability.hidden);}
 function json(res,data,status=200,cookie){res.writeHead(status,{'Content-Type':'application/json; charset=utf-8','Cache-Control':'no-store',...(cookie?{'Set-Cookie':cookie}:{})});res.end(JSON.stringify(data));}
-function cookie(name,value,maxAge){return `${name}=${value}; HttpOnly; SameSite=Strict; Path=/; Max-Age=${maxAge}${process.env.COOKIE_SECURE==='1'?'; Secure':''}`;}
+function cookie(name,value,maxAge){return `${name}=${value}; HttpOnly; SameSite=Strict; Path=/; Max-Age=${maxAge}${process.env.COOKIE_SECURE==='1'||process.env.VERCEL==='1'?'; Secure':''}`;}
 async function event(actor,before,after,kind,connection=db){await connection.prepare('INSERT INTO listing_events VALUES (?,?,?,?,?,?,?)').run(id(),after.id,actor,kind,JSON.stringify(before),JSON.stringify(after),now());}
 function validListing(b){if(!['in_stock','low_stock','out_of_stock'].includes(b.status_reported))fail(400,'Choose a stock status.');if(!config.currencies.includes(b.currency))fail(400,'Choose INR or USD.');if(!Number.isFinite(Number(b.price_min))||Number(b.price_min)<=0||Number(b.price_min)>1e9)fail(400,'Enter a positive price.');if(b.price_max!==''&&b.price_max!=null&&(!Number.isFinite(Number(b.price_max))||Number(b.price_max)<Number(b.price_min)))fail(400,'Maximum price must be at least the minimum price.');if(b.quantity!==''&&b.quantity!=null&&(!Number.isInteger(Number(b.quantity))||Number(b.quantity)<0))fail(400,'Quantity must be a non-negative whole number.');}
 async function createShop(req,b){const u=await current(req),details=await shopDetails(db,b);const shop={id:id(),owner_id:u?.id||null,city:config.city,lat:null,lng:null,phone:null,pincode:null,hours:null,photos:'[]',categories:'[]',...details,status:'pending',verification_status:'unverified',verified_at:null};await transaction(async tx=>{await insert('shops',shop,tx);await audit(u?.id||'visitor','shop_submit',shop.id,{visitor:!u},tx);});return shop;}
