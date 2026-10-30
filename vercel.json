@@ -9,8 +9,8 @@
   },
   "rewrites": [
     { "source": "/", "destination": "/api/index" },
-    { "source": "/api", "destination": "/api/api" },
-    { "source": "/api/:path*", "destination": "/api/api/:path*" },
-    { "source": "/:path*", "destination": "/api/:path*" }
+    { "source": "/api", "destination": "/api/index" },
+    { "source": "/api/:path*", "destination": "/api/[...path]" },
+    { "source": "/:path*", "destination": "/api/[...path]" }
   ]
 }

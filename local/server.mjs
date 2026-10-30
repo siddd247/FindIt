@@ -24,7 +24,7 @@ const root=path.resolve(path.dirname(fileURLToPath(import.meta.url)),'..');
 const dataDir=path.resolve(root,process.env.VERCEL==='1'?path.join(os.tmpdir(),'nearbuy-vercel'):process.env.LOCAL_DATA_DIR||'.local');
 mkdirSync(dataDir,{recursive:true});mkdirSync(path.join(dataDir,'uploads'),{recursive:true});
 const seedDb=path.join(root,'local','seed.sqlite'),liveDb=path.join(dataDir,'stock.sqlite');
-if(process.env.VERCEL==='1'&&!existsSync(liveDb)&&existsSync(seedDb))try{copyFileSync(seedDb,liveDb);}catch{}
+if(process.env.VERCEL==='1'&&existsSync(seedDb)){let needCopy=false;try{if(!existsSync(liveDb))needCopy=true;else if(statSync(liveDb).size<1000000)needCopy=true;}catch{needCopy=true;}if(needCopy)try{copyFileSync(seedDb,liveDb);}catch{}}
 const hasCloudinary=Boolean(process.env.CLOUDINARY_CLOUD_NAME&&process.env.CLOUDINARY_API_KEY&&process.env.CLOUDINARY_API_SECRET);
 const imageStorage=(process.env.IMAGE_STORAGE==='cloudinary'||process.env.VERCEL==='1')&&hasCloudinary
  ?createCloudinaryStorage()

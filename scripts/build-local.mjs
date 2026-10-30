@@ -15,14 +15,14 @@ function collect(folder) {
   for (const entry of readdirSync(path.join(root, folder), { withFileTypes: true })) {
     const name = folder + '/' + entry.name;
     if (entry.isDirectory()) collect(name);
-    else if (name==='web/vendor/lucide/icon-nodes.json'||/\.(mjs|js|css|html|svg|webmanifest|sql|ttf|txt|md|png|webp|jpg|jpeg)$/i.test(name)) files.push(name);
+    else if (name==='web/vendor/lucide/icon-nodes.json'||/\.(mjs|js|css|html|svg|webmanifest|sql|ttf|txt|md|png|webp|jpg|jpeg|sqlite)$/i.test(name)) files.push(name);
   }
 }
 collect('local'); collect('web'); files.push('scripts/start-local.mjs');
 for (const file of ['lib/config.ts', 'lib/rules.ts', 'lib/seed.ts']) files.push(file);
 const manifest = [];
 for (const source of files) {
-  let content = readFileSync(path.join(root, source), /\.(ttf|png|jpg|jpeg|webp|ico)$/i.test(source) ? undefined : 'utf8');
+  let content = readFileSync(path.join(root, source), /\.(ttf|png|jpg|jpeg|webp|ico|sqlite)$/i.test(source) ? undefined : 'utf8');
   const target = source.replace(/\.ts$/, '.mjs');
   if (source.endsWith('.ts')) content = stripTypeScriptTypes(content, { mode: 'strip' });
   if (typeof content === 'string' && /\.(mjs|ts|js)$/.test(source)) content = content.replace(/(['"])([^'"\n]+)\.ts\1/g, '$1$2.mjs$1');
